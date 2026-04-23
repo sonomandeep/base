@@ -16,6 +16,9 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  server: {
+    allowedHosts: [process.env.ALLOWED_HOSTS as string], // TODO: must be an array
+  },
 });
 
 export default config;
