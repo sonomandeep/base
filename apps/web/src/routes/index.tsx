@@ -107,7 +107,7 @@ const images = [
 
 function Home() {
   return (
-    <div className="mx-auto mt-12 flex max-w-136 flex-col gap-8">
+    <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
       <header className="inline-flex w-full items-center justify-between px-4">
         <Select
           defaultValue="all_nodes"
