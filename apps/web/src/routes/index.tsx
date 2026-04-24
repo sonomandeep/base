@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   Box,
@@ -10,6 +10,7 @@ import {
   Save,
 } from "lucide-react";
 import { Button } from "#/components/ui/button";
+import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
 import { cn } from "#/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -240,48 +241,56 @@ function Home() {
           </Button>
         </div>
 
-        <div className="flex w-full flex-col gap-1">
+        <ItemGroup className="gap-1">
           {containers.map((container) => (
-            <div
-              className="inline-flex w-full items-center justify-between rounded-xl px-4 py-2 hover:bg-neutral-50"
+            <Item
+              className="w-full flex-nowrap items-center justify-between rounded-lg border-transparent"
               key={container.id}
-            >
-              <div className="inline-flex items-center gap-2">
-                <div
-                  className={cn(
-                    "h-3 w-0.5 rounded-sm",
-                    container.state === "HEALTHY" && "bg-green-500",
-                    container.state === "DEGRADED" && "bg-amber-500",
-                    container.state === "STOPPED" && "bg-red-500"
-                  )}
-                />
+              render={
+                <Link
+                  params={{ containerId: String(container.id) }}
+                  to="/containers/$containerId"
+                >
+                  <div className="inline-flex items-center gap-2">
+                    <div
+                      className={cn(
+                        "h-3 w-0.5 rounded-sm",
+                        container.state === "HEALTHY" && "bg-green-500",
+                        container.state === "DEGRADED" && "bg-amber-500",
+                        container.state === "STOPPED" && "bg-red-500"
+                      )}
+                    />
 
-                <div className="inline-flex items-baseline gap-2">
-                  <p className="text-sm">{container.name}</p>
-                  <p className="text-muted-foreground text-xs">
-                    {container.image}
-                  </p>
-                </div>
-              </div>
+                    <ItemContent className="flex-none flex-row items-baseline gap-2">
+                      <ItemTitle className="font-normal text-sm">
+                        {container.name}
+                      </ItemTitle>
+                      <p className="text-muted-foreground text-xs">
+                        {container.image}
+                      </p>
+                    </ItemContent>
+                  </div>
 
-              <div className="inline-flex gap-4 font-mono">
-                <div className="inline-flex items-baseline gap-1">
-                  <p className="text-muted-foreground text-xs">CPU</p>
-                  <p className="text-sm">
-                    {String(container.cpu).padStart(2, "0")}%
-                  </p>
-                </div>
+                  <div className="inline-flex gap-4 font-mono">
+                    <div className="inline-flex items-baseline gap-1">
+                      <p className="text-muted-foreground text-xs">CPU</p>
+                      <p className="text-sm">
+                        {String(container.cpu).padStart(2, "0")}%
+                      </p>
+                    </div>
 
-                <div className="inline-flex items-baseline gap-1">
-                  <p className="text-muted-foreground text-xs">RAM</p>
-                  <p className="text-sm">
-                    {String(container.ram).padStart(2, "0")}%
-                  </p>
-                </div>
-              </div>
-            </div>
+                    <div className="inline-flex items-baseline gap-1">
+                      <p className="text-muted-foreground text-xs">RAM</p>
+                      <p className="text-sm">
+                        {String(container.ram).padStart(2, "0")}%
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              }
+            />
           ))}
-        </div>
+        </ItemGroup>
       </section>
 
       <section className="grid w-full grid-cols-6 gap-4 px-4">
@@ -318,31 +327,39 @@ function Home() {
           </Button>
         </div>
 
-        <div className="flex w-full flex-col gap-1">
+        <ItemGroup className="gap-1">
           {images.map((image) => (
-            <div
-              className="inline-flex w-full items-center justify-between rounded-xl px-4 py-3 hover:bg-neutral-50"
+            <Item
+              className="w-full flex-nowrap items-center justify-between rounded-lg border-transparent"
               key={image.id}
-            >
-              <div className="inline-flex items-baseline gap-2">
-                <p className="text-sm">{image.name}</p>
-                <p className="text-muted-foreground text-xs">{image.tag}</p>
-              </div>
+              render={
+                <Link
+                  params={{ imageId: String(image.id) }}
+                  to="/images/$imageId"
+                >
+                  <ItemContent className="flex-none flex-row items-baseline gap-2">
+                    <ItemTitle className="font-normal text-sm">
+                      {image.name}
+                    </ItemTitle>
+                    <p className="text-muted-foreground text-xs">{image.tag}</p>
+                  </ItemContent>
 
-              <div className="inline-flex gap-4 font-mono">
-                <div className="inline-flex items-baseline gap-1">
-                  <p className="text-muted-foreground text-xs">REG</p>
-                  <p className="text-sm">{image.registry}</p>
-                </div>
+                  <div className="inline-flex gap-4 font-mono">
+                    <div className="inline-flex items-baseline gap-1">
+                      <p className="text-muted-foreground text-xs">REG</p>
+                      <p className="text-sm">{image.registry}</p>
+                    </div>
 
-                <div className="inline-flex items-baseline gap-1">
-                  <p className="text-muted-foreground text-xs">DISK</p>
-                  <p className="text-sm">{image.disk} MB</p>
-                </div>
-              </div>
-            </div>
+                    <div className="inline-flex items-baseline gap-1">
+                      <p className="text-muted-foreground text-xs">DISK</p>
+                      <p className="text-sm">{image.disk} MB</p>
+                    </div>
+                  </div>
+                </Link>
+              }
+            />
           ))}
-        </div>
+        </ItemGroup>
       </section>
     </div>
   );
