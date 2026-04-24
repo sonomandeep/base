@@ -117,7 +117,7 @@ function Home() {
               </div>
             </div>
 
-            <div className="flex w-full gap-1">
+            <div className="flex w-full gap-1 font-mono">
               <div className="flex flex-col gap-1" style={{ flex: 12 }}>
                 <div className="h-2 w-full rounded-sm bg-green-500" />
                 <span className="text-xs">12</span>
@@ -142,7 +142,7 @@ function Home() {
             <Layers className="size-3.5" />
           </div>
 
-          <div className="inline-flex items-baseline gap-3">
+          <div className="inline-flex items-baseline gap-3 font-mono">
             <h1 className="font-medium text-lg">37</h1>
             <span className="text-muted-foreground text-xs">195 GB</span>
           </div>
@@ -154,7 +154,7 @@ function Home() {
             <Cpu className="size-3.5" />
           </div>
 
-          <div className="inline-flex items-baseline gap-3">
+          <div className="inline-flex items-baseline gap-3 font-mono">
             <h1 className="font-medium text-lg">24%</h1>
             <span className="text-muted-foreground text-xs">12 vCPU</span>
           </div>
@@ -166,7 +166,7 @@ function Home() {
             <MemoryStick className="size-3.5" />
           </div>
 
-          <div className="inline-flex items-baseline gap-3">
+          <div className="inline-flex items-baseline gap-3 font-mono">
             <h1 className="font-medium text-lg">73%</h1>
             <span className="text-muted-foreground text-xs">64 GB</span>
           </div>
@@ -178,7 +178,7 @@ function Home() {
             <Save className="size-3.5" />
           </div>
 
-          <div className="inline-flex items-baseline gap-3">
+          <div className="inline-flex items-baseline gap-3 font-mono">
             <h1 className="font-medium text-lg">38%</h1>
             <span className="text-muted-foreground text-xs">512 GB</span>
           </div>
@@ -217,7 +217,7 @@ function Home() {
                 </div>
               </div>
 
-              <div className="inline-flex gap-4">
+              <div className="inline-flex gap-4 font-mono">
                 <div className="inline-flex items-baseline gap-1">
                   <p className="text-muted-foreground text-xs">CPU</p>
                   <p className="text-sm">
