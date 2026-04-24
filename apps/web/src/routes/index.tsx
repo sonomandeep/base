@@ -66,6 +66,44 @@ const containers = [
   },
 ];
 
+const images = [
+  {
+    id: 1,
+    name: "Nginx",
+    tag: "latest",
+    registry: "DOCKER HUB",
+    disk: 37,
+  },
+  {
+    id: 2,
+    name: "Postgres",
+    tag: "latest",
+    registry: "DOCKER HUB",
+    disk: 379,
+  },
+  {
+    id: 3,
+    name: "Redis",
+    tag: "6-alpine",
+    registry: "DOCKER HUB",
+    disk: 32,
+  },
+  {
+    id: 4,
+    name: "Auth Service",
+    tag: "v2",
+    registry: "GHCR",
+    disk: 128,
+  },
+  {
+    id: 5,
+    name: "Notification Service",
+    tag: "4.0.1",
+    registry: "AWS ECR",
+    disk: 214,
+  },
+];
+
 function Home() {
   return (
     <div className="mx-auto mt-12 flex max-w-136 flex-col gap-8">
@@ -195,10 +233,10 @@ function Home() {
       </section>
 
       <section className="grid w-full gap-4">
-        <div className="inline-flex w-full items-center justify-between px-4">
-          <h2 className="font-medium">Containers</h2>
-          <Button variant="link">
-            View all <ArrowRight />
+        <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
+          <h2 className="font-medium">Images</h2>
+          <Button className="font-normal text-muted-foreground" variant="ghost">
+            View all <ArrowRight className="size-3" />
           </Button>
         </div>
 
@@ -208,7 +246,7 @@ function Home() {
               className="inline-flex w-full items-center justify-between rounded-xl px-4 py-2 hover:bg-neutral-50"
               key={container.id}
             >
-              <div className="inline-flex items-center gap-3">
+              <div className="inline-flex items-center gap-2">
                 <div
                   className={cn(
                     "h-3 w-0.5 rounded-sm",
@@ -218,7 +256,7 @@ function Home() {
                   )}
                 />
 
-                <div className="inline-flex items-baseline gap-3">
+                <div className="inline-flex items-baseline gap-2">
                   <p className="text-sm">{container.name}</p>
                   <p className="text-muted-foreground text-xs">
                     {container.image}
@@ -269,6 +307,41 @@ function Home() {
             <h1 className="font-medium text-lg">9</h1>
             <span className="text-muted-foreground text-xs">16.2 GB</span>
           </div>
+        </div>
+      </section>
+
+      <section className="flex w-full flex-col gap-3">
+        <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
+          <h2 className="font-medium">Images</h2>
+          <Button className="font-normal text-muted-foreground" variant="ghost">
+            View all <ArrowRight className="size-3" />
+          </Button>
+        </div>
+
+        <div className="flex w-full flex-col gap-1">
+          {images.map((image) => (
+            <div
+              className="inline-flex w-full items-center justify-between rounded-xl px-4 py-3 hover:bg-neutral-50"
+              key={image.id}
+            >
+              <div className="inline-flex items-baseline gap-2">
+                <p className="text-sm">{image.name}</p>
+                <p className="text-muted-foreground text-xs">{image.tag}</p>
+              </div>
+
+              <div className="inline-flex gap-4 font-mono">
+                <div className="inline-flex items-baseline gap-1">
+                  <p className="text-muted-foreground text-xs">REG</p>
+                  <p className="text-sm">{image.registry}</p>
+                </div>
+
+                <div className="inline-flex items-baseline gap-1">
+                  <p className="text-muted-foreground text-xs">DISK</p>
+                  <p className="text-sm">{image.disk} MB</p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>
