@@ -1,5 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Box, Cpu, Layers, MemoryStick, Save } from "lucide-react";
+import {
+  ArrowRight,
+  Box,
+  Cpu,
+  HardDrive,
+  Layers,
+  MemoryStick,
+  Network,
+  Save,
+} from "lucide-react";
 import { Button } from "#/components/ui/button";
 import { cn } from "#/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -234,6 +243,32 @@ function Home() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="grid w-full grid-cols-6 gap-4 px-4">
+        <div className="col-span-3 flex flex-col gap-6 rounded-xl bg-neutral-50 p-4">
+          <div className="inline-flex w-full items-center justify-between text-neutral-700">
+            <h3 className="font-medium text-sm">Networks</h3>
+            <Network className="size-3.5" />
+          </div>
+
+          <div className="inline-flex items-baseline gap-3 font-mono">
+            <h1 className="font-medium text-lg">6</h1>
+            <span className="text-muted-foreground text-xs">4 connected</span>
+          </div>
+        </div>
+
+        <div className="col-span-3 flex flex-col gap-6 rounded-xl bg-neutral-50 p-4">
+          <div className="inline-flex w-full items-center justify-between text-neutral-700">
+            <h3 className="font-medium text-sm">Volumes</h3>
+            <HardDrive className="size-3.5" />
+          </div>
+
+          <div className="inline-flex items-baseline gap-3 font-mono">
+            <h1 className="font-medium text-lg">9</h1>
+            <span className="text-muted-foreground text-xs">16.2 GB</span>
+          </div>
         </div>
       </section>
     </div>
