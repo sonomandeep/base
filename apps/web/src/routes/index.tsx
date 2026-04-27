@@ -1,19 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, HardDrive, Network } from "lucide-react";
+import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { Button } from "#/components/ui/button";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
 import { getContainersFn } from "#/features/containers/functions";
 import { NodeStateCards } from "#/features/nodes/components/node-state";
 import { cn } from "#/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -107,33 +99,7 @@ const images = [
 function Home() {
   return (
     <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
-      <header className="inline-flex w-full items-center justify-between px-4">
-        <Select
-          defaultValue="all_nodes"
-          items={[
-            { label: "Select", value: null },
-            { label: "All nodes", value: "all_nodes" },
-          ]}
-        >
-          <SelectTrigger className="w-32">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="all_nodes">All Nodes</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        <div className="inline-flex items-center gap-3">
-          <p className="text-sm">Mando</p>
-
-          <Avatar size="sm">
-            <AvatarImage src="https://github.com/sonomandeep.png" />
-            <AvatarFallback>M</AvatarFallback>
-          </Avatar>
-        </div>
-      </header>
+      <DashboardHeader />
 
       <NodeStateCards />
 
