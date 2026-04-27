@@ -22,7 +22,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [{ title: "Base | Dashboard" }],
+  }),
+  component: Home,
+});
 
 const containers = [
   {
