@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "#/components/ui/button";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
+import { getContainersFn } from "#/features/containers/functions";
 import { cn } from "#/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/")({
     meta: [{ title: "Base | Dashboard" }],
   }),
   component: Home,
+  loader: () => getContainersFn(),
 });
 
 const containers = [
