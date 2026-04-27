@@ -15,7 +15,54 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "TanStack Start Starter",
+        title: "Base",
+      },
+      {
+        name: "description",
+        content:
+          "Base is a lightweight web app for managing Docker and Podman containers.",
+      },
+      {
+        name: "application-name",
+        content: "Base",
+      },
+      {
+        name: "apple-mobile-web-app-title",
+        content: "Base",
+      },
+      {
+        name: "theme-color",
+        content: "#ffffff",
+      },
+      {
+        name: "color-scheme",
+        content: "light dark",
+      },
+      {
+        property: "og:type",
+        content: "website",
+      },
+      {
+        property: "og:title",
+        content: "Base",
+      },
+      {
+        property: "og:description",
+        content:
+          "Base is a lightweight web app for managing Docker and Podman containers.",
+      },
+      {
+        name: "twitter:card",
+        content: "summary",
+      },
+      {
+        name: "twitter:title",
+        content: "Base",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Base is a lightweight web app for managing Docker and Podman containers.",
       },
     ],
     links: [
