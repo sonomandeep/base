@@ -1,11 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getMetrics } from "./service.server";
 
-export const getHostStateFn = createServerFn().handler(async () => {
-  const { data, error } = await getMetrics();
-  if (error) {
-    console.error(error);
-  }
+export type HostState = Awaited<ReturnType<typeof getMetrics>>["data"];
 
-  return data;
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export const streamHostStateFn = createServerFn().handler(async function* () {
+  while (true) {
+    const { data, error } = await getMetrics();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    yield data;
+
+    await sleep(1000);
+  }
 });

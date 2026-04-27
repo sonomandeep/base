@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Box, Cpu, Layers, MemoryStick, Save } from "lucide-react";
+import { useEffect, useState } from "react";
 import { getContainersFn } from "#/features/containers/functions";
-import { getHostStateFn } from "#/features/nodes/functions";
+import { type HostState, streamHostStateFn } from "#/features/nodes/functions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "@/components/ui/item";
@@ -18,15 +19,39 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/containers/")({
   component: RouteComponent,
   loader: async () => {
-    const state = await getHostStateFn();
     const containers = await getContainersFn();
 
-    return { state, containers };
+    return { containers };
   },
 });
 
 function RouteComponent() {
   const loader = Route.useLoaderData();
+  const [state, setState] = useState<HostState | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function readHostState() {
+      for await (const nextState of await streamHostStateFn()) {
+        if (cancelled) {
+          break;
+        }
+
+        setState(nextState);
+      }
+    }
+
+    readHostState().catch((error) => {
+      if (!cancelled) {
+        console.error(error);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
@@ -126,10 +151,10 @@ function RouteComponent() {
 
           <div className="inline-flex items-baseline gap-3 font-mono">
             <h1 className="font-medium text-lg">
-              {loader.state.cpu.usage.toFixed(1)}%
+              {state ? `${state.cpu.usage.toFixed(1)}%` : "--"}
             </h1>
             <span className="text-muted-foreground text-xs">
-              {loader.state.cpu.cores} vCPU
+              {state ? `${state.cpu.cores} vCPU` : "--"}
             </span>
           </div>
         </div>
@@ -142,10 +167,12 @@ function RouteComponent() {
 
           <div className="inline-flex items-baseline gap-3 font-mono">
             <h1 className="font-medium text-lg">
-              {loader.state.memory.usage.toFixed(0)}%
+              {state ? `${state.memory.usage.toFixed(0)}%` : "--"}
             </h1>
             <span className="text-muted-foreground text-xs">
-              {(loader.state.memory.total / 1024 ** 3).toFixed(0)} GB
+              {state
+                ? `${(state.memory.total / 1024 ** 3).toFixed(0)} GB`
+                : "--"}
             </span>
           </div>
         </div>
@@ -158,10 +185,12 @@ function RouteComponent() {
 
           <div className="inline-flex items-baseline gap-3 font-mono">
             <h1 className="font-medium text-lg">
-              {loader.state.storage.usage.toFixed(0)}%
+              {state ? `${state.storage.usage.toFixed(0)}%` : "--"}
             </h1>
             <span className="text-muted-foreground text-xs">
-              {(loader.state.storage.total / 1024 ** 3).toFixed(0)} GB
+              {state
+                ? `${(state.storage.total / 1024 ** 3).toFixed(0)} GB`
+                : "--"}
             </span>
           </div>
         </div>
