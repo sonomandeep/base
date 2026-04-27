@@ -1,3 +1,4 @@
+import { statfs } from "node:fs/promises";
 import os from "node:os";
 
 async function getCpuUsage(): Promise<number> {
@@ -21,12 +22,44 @@ async function getCpuUsage(): Promise<number> {
   return avgUsage * 100;
 }
 
+async function getStorageUsage(path = "/") {
+  const { bavail, blocks, bsize } = await statfs(path);
+
+  const total = blocks * bsize;
+  const free = bavail * bsize;
+  const used = total - free;
+
+  return {
+    total,
+    free,
+    used,
+    usage: total ? (used / total) * 100 : 0,
+  };
+}
+
+function getMemoryUsage() {
+  const total = os.totalmem();
+  const free = os.freemem();
+  const used = total - free;
+
+  return {
+    total,
+    free,
+    used,
+    usage: total ? (used / total) * 100 : 0,
+  };
+}
+
 export async function getMetrics() {
-  const memory = { total: os.totalmem(), free: os.freemem() };
+  const [cpuUsage, storage] = await Promise.all([
+    getCpuUsage(),
+    getStorageUsage(),
+  ]);
+  const memory = getMemoryUsage();
   const cpu = {
     cores: os.cpus().length,
-    usage: await getCpuUsage(),
+    usage: cpuUsage,
   };
 
-  return { data: { memory, cpu }, error: null };
+  return { data: { memory, cpu, storage }, error: null };
 }

@@ -142,12 +142,7 @@ function RouteComponent() {
 
           <div className="inline-flex items-baseline gap-3 font-mono">
             <h1 className="font-medium text-lg">
-              {(
-                ((loader.state.memory.total - loader.state.memory.free) /
-                  loader.state.memory.total) *
-                100
-              ).toFixed(0)}
-              %
+              {loader.state.memory.usage.toFixed(0)}%
             </h1>
             <span className="text-muted-foreground text-xs">
               {(loader.state.memory.total / 1024 ** 3).toFixed(0)} GB
@@ -162,8 +157,12 @@ function RouteComponent() {
           </div>
 
           <div className="inline-flex items-baseline gap-3 font-mono">
-            <h1 className="font-medium text-lg">38%</h1>
-            <span className="text-muted-foreground text-xs">512 GB</span>
+            <h1 className="font-medium text-lg">
+              {loader.state.storage.usage.toFixed(0)}%
+            </h1>
+            <span className="text-muted-foreground text-xs">
+              {(loader.state.storage.total / 1024 ** 3).toFixed(0)} GB
+            </span>
           </div>
         </div>
       </section>
