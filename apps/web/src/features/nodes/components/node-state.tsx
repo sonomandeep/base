@@ -6,7 +6,7 @@ function formatGigabytes(bytes: number) {
   return `${(bytes / 1024 ** 3).toFixed(0)} GB`;
 }
 
-export function NodeStateCards() {
+export function NodeState() {
   const [state, setState] = useState<HostState | null>(null);
 
   useEffect(() => {

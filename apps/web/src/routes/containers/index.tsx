@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { getContainersFn } from "#/features/containers/functions";
-import { NodeStateCards } from "#/features/nodes/components/node-state";
+import { NodeState } from "#/features/nodes/components/node-state";
 import { Button } from "@/components/ui/button";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "@/components/ui/item";
 import { cn } from "@/lib/utils";
@@ -21,8 +21,7 @@ function RouteComponent() {
   return (
     <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
       <DashboardHeader />
-
-      <NodeStateCards />
+      <NodeState />
 
       <section className="grid w-full gap-4">
         <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
