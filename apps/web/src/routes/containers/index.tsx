@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Box, Cpu, Layers, MemoryStick, Save } from "lucide-react";
 import { getContainersFn } from "#/features/containers/functions";
+import { getHostStateFn } from "#/features/nodes/functions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "@/components/ui/item";
@@ -16,11 +17,16 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/containers/")({
   component: RouteComponent,
-  loader: async () => getContainersFn(),
+  loader: async () => {
+    const state = await getHostStateFn();
+    const containers = await getContainersFn();
+
+    return { state, containers };
+  },
 });
 
 function RouteComponent() {
-  const containers = Route.useLoaderData();
+  const loader = Route.useLoaderData();
 
   return (
     <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
@@ -119,8 +125,12 @@ function RouteComponent() {
           </div>
 
           <div className="inline-flex items-baseline gap-3 font-mono">
-            <h1 className="font-medium text-lg">24%</h1>
-            <span className="text-muted-foreground text-xs">12 vCPU</span>
+            <h1 className="font-medium text-lg">
+              {loader.state.cpu.usage.toFixed(1)}%
+            </h1>
+            <span className="text-muted-foreground text-xs">
+              {loader.state.cpu.cores} vCPU
+            </span>
           </div>
         </div>
 
@@ -131,8 +141,17 @@ function RouteComponent() {
           </div>
 
           <div className="inline-flex items-baseline gap-3 font-mono">
-            <h1 className="font-medium text-lg">73%</h1>
-            <span className="text-muted-foreground text-xs">64 GB</span>
+            <h1 className="font-medium text-lg">
+              {(
+                ((loader.state.memory.total - loader.state.memory.free) /
+                  loader.state.memory.total) *
+                100
+              ).toFixed(0)}
+              %
+            </h1>
+            <span className="text-muted-foreground text-xs">
+              {(loader.state.memory.total / 1024 ** 3).toFixed(0)} GB
+            </span>
           </div>
         </div>
 
@@ -158,7 +177,7 @@ function RouteComponent() {
         </div>
 
         <ItemGroup className="gap-1">
-          {containers.map((container) => (
+          {loader.containers.map((container) => (
             <Item
               className="w-full flex-nowrap items-center justify-between rounded-lg border-transparent"
               key={container.id}
