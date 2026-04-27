@@ -241,9 +241,15 @@ function Home() {
       <section className="grid w-full gap-4">
         <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
           <h2 className="font-medium">Containers</h2>
-          <Button className="font-normal text-muted-foreground" variant="ghost">
-            View all <ArrowRight className="size-3" />
-          </Button>
+          <Button
+            className="font-normal text-muted-foreground"
+            render={
+              <Link to="/containers">
+                View all <ArrowRight className="size-3" />
+              </Link>
+            }
+            variant="ghost"
+          />
         </div>
 
         <ItemGroup className="gap-1">
