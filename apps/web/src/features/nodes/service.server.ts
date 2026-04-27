@@ -1,5 +1,6 @@
 import { statfs } from "node:fs/promises";
 import os from "node:os";
+import { getContainerStateSummary } from "#/features/containers/service.server";
 
 async function getCpuUsage(): Promise<number> {
   const sample = () =>
@@ -51,9 +52,10 @@ function getMemoryUsage() {
 }
 
 export async function getMetrics() {
-  const [cpuUsage, storage] = await Promise.all([
+  const [cpuUsage, storage, containerStateSummary] = await Promise.all([
     getCpuUsage(),
     getStorageUsage(),
+    getContainerStateSummary(),
   ]);
   const memory = getMemoryUsage();
   const cpu = {
@@ -61,5 +63,8 @@ export async function getMetrics() {
     usage: cpuUsage,
   };
 
-  return { data: { memory, cpu, storage }, error: null };
+  return {
+    data: { memory, cpu, storage, containers: containerStateSummary.data },
+    error: null,
+  };
 }

@@ -17,7 +17,13 @@ const config = defineConfig(({ mode }) => {
 
   return {
     resolve: { tsconfigPaths: true },
-    plugins: [devtools(), nitro(), tailwindcss(), tanstackStart(), viteReact()],
+    plugins: [
+      devtools(),
+      nitro({ traceDeps: ["!cpu-features", "!ssh2"] }),
+      tailwindcss(),
+      tanstackStart(),
+      viteReact(),
+    ],
     server: {
       allowedHosts,
     },

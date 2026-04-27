@@ -39,6 +39,18 @@ export function NodeState() {
   const memoryTotal = state ? formatGigabytes(state.memory.total) : "--";
   const storageUsage = state ? `${state.storage.usage.toFixed(0)}%` : "--";
   const storageTotal = state ? formatGigabytes(state.storage.total) : "--";
+  const containerSummary = state?.containers;
+  const healthyContainers = containerSummary
+    ? String(containerSummary.healthy)
+    : "--";
+  const degradedContainers = containerSummary
+    ? String(containerSummary.degraded)
+    : "--";
+  const stoppedContainers = containerSummary
+    ? String(containerSummary.stopped)
+    : "--";
+  const getContainerStateFlex = (count?: number) =>
+    containerSummary && containerSummary.total > 0 ? count : 1;
 
   return (
     <section className="grid w-full grid-cols-6 grid-rows-[auto_auto] gap-4 px-4">
@@ -71,19 +83,30 @@ export function NodeState() {
           </div>
 
           <div className="flex w-full gap-1 font-mono">
-            <div className="flex flex-col gap-1" style={{ flex: 12 }}>
+            <div
+              className="flex flex-col gap-1"
+              style={{ flex: getContainerStateFlex(containerSummary?.healthy) }}
+            >
               <div className="h-2 w-full rounded-sm bg-green-500" />
-              <span className="text-xs">12</span>
+              <span className="text-xs">{healthyContainers}</span>
             </div>
 
-            <div className="flex flex-col gap-1" style={{ flex: 3 }}>
+            <div
+              className="flex flex-col gap-1"
+              style={{
+                flex: getContainerStateFlex(containerSummary?.degraded),
+              }}
+            >
               <div className="h-2 w-full rounded-sm bg-amber-500" />
-              <span className="text-xs">3</span>
+              <span className="text-xs">{degradedContainers}</span>
             </div>
 
-            <div className="flex flex-col gap-1" style={{ flex: 5 }}>
+            <div
+              className="flex flex-col gap-1"
+              style={{ flex: getContainerStateFlex(containerSummary?.stopped) }}
+            >
               <div className="h-2 w-full rounded-sm bg-red-500" />
-              <span className="text-xs">5</span>
+              <span className="text-xs">{stoppedContainers}</span>
             </div>
           </div>
         </div>
