@@ -107,6 +107,7 @@ function Home() {
           <h2 className="font-medium">Containers</h2>
           <Button
             className="font-normal text-muted-foreground"
+            nativeButton={false}
             render={
               <Link to="/containers">
                 View all <ArrowRight className="size-3" />
