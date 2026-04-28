@@ -10,6 +10,7 @@ import {
   ContainerListTitle,
 } from "#/features/containers/components/container-list";
 import { getContainersFn } from "#/features/containers/functions";
+import { getNetworkStateSummaryFn } from "#/features/networks/functions";
 import { NodeState } from "#/features/nodes/components/node-state";
 
 export const Route = createFileRoute("/")({
@@ -17,7 +18,14 @@ export const Route = createFileRoute("/")({
     meta: [{ title: "Base | Dashboard" }],
   }),
   component: Home,
-  loader: () => getContainersFn(),
+  loader: async () => {
+    const [containers, networks] = await Promise.all([
+      getContainersFn(),
+      getNetworkStateSummaryFn(),
+    ]);
+
+    return { containers, networks };
+  },
 });
 
 const images = [
@@ -59,14 +67,14 @@ const images = [
 ];
 
 function Home() {
-  const containers = Route.useLoaderData();
+  const loader = Route.useLoaderData();
 
   return (
     <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
       <DashboardHeader />
       <NodeState />
 
-      <ContainerList initialContainers={containers} limit={5} stream>
+      <ContainerList initialContainers={loader.containers} limit={5} stream>
         <ContainerListHeader>
           <ContainerListTitle>Containers</ContainerListTitle>
           <Button
@@ -92,8 +100,14 @@ function Home() {
           </div>
 
           <div className="inline-flex items-baseline gap-3 font-mono">
-            <h1 className="font-medium text-lg">6</h1>
-            <span className="text-muted-foreground text-xs">4 connected</span>
+            <h1 className="font-medium text-lg">
+              {loader.networks ? loader.networks.total : "--"}
+            </h1>
+            <span className="text-muted-foreground text-xs">
+              {loader.networks
+                ? `${loader.networks.connected} connected`
+                : "--"}
+            </span>
           </div>
         </div>
 
