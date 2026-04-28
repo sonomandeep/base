@@ -1,9 +1,18 @@
 import { Box, Cpu, Layers, MemoryStick, Save } from "lucide-react";
+import prettyBytes from "pretty-bytes";
 import { useEffect, useState } from "react";
 import { type HostState, streamHostStateFn } from "#/features/nodes/functions";
 
-function formatGigabytes(bytes: number) {
-  return `${(bytes / 1024 ** 3).toFixed(0)} GB`;
+function formatBytes(bytes: number) {
+  return prettyBytes(bytes, { maximumFractionDigits: 0 });
+}
+
+function formatOptionalBytes(bytes?: number) {
+  return bytes === undefined ? "--" : formatBytes(bytes);
+}
+
+function formatOptionalNumber(value?: number) {
+  return value === undefined ? "--" : String(value);
 }
 
 export function NodeState() {
@@ -36,18 +45,21 @@ export function NodeState() {
   const cpuUsage = state ? `${state.cpu.usage.toFixed(1)}%` : "--";
   const cpuCores = state ? `${state.cpu.cores} vCPU` : "--";
   const memoryUsage = state ? `${state.memory.usage.toFixed(0)}%` : "--";
-  const memoryTotal = state ? formatGigabytes(state.memory.total) : "--";
+  const memoryTotal = state ? formatBytes(state.memory.total) : "--";
   const storageUsage = state ? `${state.storage.usage.toFixed(0)}%` : "--";
-  const storageTotal = state ? formatGigabytes(state.storage.total) : "--";
+  const storageTotal = state ? formatBytes(state.storage.total) : "--";
+  const imageSummary = state?.images;
+  const imageCount = formatOptionalNumber(imageSummary?.total);
+  const imageSize = formatOptionalBytes(imageSummary?.size);
   const containerSummary = state?.containers;
   const healthyCount = containerSummary?.healthy ?? 0;
   const degradedCount = containerSummary?.degraded ?? 0;
   const stoppedCount = containerSummary?.stopped ?? 0;
   const showAllContainerStates =
     !containerSummary || containerSummary.total === 0;
-  const healthyContainers = containerSummary ? String(healthyCount) : "--";
-  const degradedContainers = containerSummary ? String(degradedCount) : "--";
-  const stoppedContainers = containerSummary ? String(stoppedCount) : "--";
+  const healthyContainers = formatOptionalNumber(containerSummary?.healthy);
+  const degradedContainers = formatOptionalNumber(containerSummary?.degraded);
+  const stoppedContainers = formatOptionalNumber(containerSummary?.stopped);
   const getContainerStateFlex = (count: number) => count || 1;
 
   return (
@@ -121,8 +133,8 @@ export function NodeState() {
         </div>
 
         <div className="inline-flex items-baseline gap-3 font-mono">
-          <h1 className="font-medium text-lg">37</h1>
-          <span className="text-muted-foreground text-xs">195 GB</span>
+          <h1 className="font-medium text-lg">{imageCount}</h1>
+          <span className="text-muted-foreground text-xs">{imageSize}</span>
         </div>
       </div>
 
