@@ -1,24 +1,13 @@
 import { docker } from "#/lib/docker/client.server";
-
-type ContainerState = "DEGRADED" | "HEALTHY" | "STOPPED";
+import {
+  type ContainerListItem,
+  type ContainerState,
+  type ContainerStateSummary,
+  containerListSchema,
+  containerStateSummarySchema,
+} from "./schema";
 
 const CONTAINER_NAME_PREFIX = /^\//;
-
-export interface ContainerListItem {
-  cpu: number | null;
-  id: string;
-  image: string;
-  name: string;
-  ram: number | null;
-  state: ContainerState;
-}
-
-export interface ContainerStateSummary {
-  degraded: number;
-  healthy: number;
-  stopped: number;
-  total: number;
-}
 
 function getContainerName(id: string, names: string[]) {
   return names[0]?.replace(CONTAINER_NAME_PREFIX, "") || id.slice(0, 12);
@@ -62,7 +51,7 @@ export async function getContainerStateSummary() {
       }
     }
 
-    return { data: summary, error: null };
+    return { data: containerStateSummarySchema.parse(summary), error: null };
   } catch (error) {
     return { data: null, error };
   }
@@ -80,7 +69,7 @@ export async function getContainers() {
       state: getContainerState(container.State, container.Status),
     }));
 
-    return { data, error: null };
+    return { data: containerListSchema.parse(data), error: null };
   } catch (error) {
     return { data: [], error };
   }
