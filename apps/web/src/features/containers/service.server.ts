@@ -1,3 +1,4 @@
+import type Dockerode from "dockerode";
 import { docker } from "#/lib/docker/client.server";
 import {
   type ContainerListItem,
@@ -29,6 +30,49 @@ function getContainerState(state?: string, status?: string): ContainerState {
     : "STOPPED";
 }
 
+function getContainerCpu(stats: Dockerode.ContainerStats) {
+  const cpuDelta =
+    stats.cpu_stats.cpu_usage.total_usage -
+    stats.precpu_stats.cpu_usage.total_usage;
+  const systemDelta =
+    stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage;
+  const onlineCpus =
+    stats.cpu_stats.online_cpus ||
+    stats.cpu_stats.cpu_usage.percpu_usage?.length ||
+    1;
+
+  if (systemDelta <= 0) {
+    return null;
+  }
+
+  return Number(((cpuDelta / systemDelta) * onlineCpus * 100 || 0).toFixed(1));
+}
+
+function getContainerRam(stats: Dockerode.ContainerStats) {
+  const cache = stats.memory_stats.stats?.cache ?? 0;
+  const usage = Math.max(stats.memory_stats.usage - cache, 0);
+  const limit = stats.memory_stats.limit;
+
+  return limit > 0 ? Number(((usage / limit) * 100).toFixed(1)) : null;
+}
+
+async function getContainerStats(id: string, state: ContainerState) {
+  if (state === "STOPPED") {
+    return { cpu: null, ram: null };
+  }
+
+  try {
+    const stats = await docker.getContainer(id).stats({ stream: false });
+
+    return {
+      cpu: getContainerCpu(stats),
+      ram: getContainerRam(stats),
+    };
+  } catch {
+    return { cpu: null, ram: null };
+  }
+}
+
 export async function getContainerStateSummary() {
   try {
     const containers = await docker.listContainers({ all: true });
@@ -57,17 +101,26 @@ export async function getContainerStateSummary() {
   }
 }
 
-export async function getContainers() {
+export async function getContainers({ withStats = false } = {}) {
   try {
     const containers = await docker.listContainers({ all: true });
-    const data: ContainerListItem[] = containers.map((container) => ({
-      cpu: null,
-      id: container.Id,
-      image: container.Image,
-      name: getContainerName(container.Id, container.Names),
-      ram: null,
-      state: getContainerState(container.State, container.Status),
-    }));
+    const data: ContainerListItem[] = await Promise.all(
+      containers.map(async (container) => {
+        const state = getContainerState(container.State, container.Status);
+        const stats = withStats
+          ? await getContainerStats(container.Id, state)
+          : { cpu: null, ram: null };
+
+        return {
+          cpu: stats.cpu,
+          id: container.Id,
+          image: container.Image,
+          name: getContainerName(container.Id, container.Names),
+          ram: stats.ram,
+          state,
+        };
+      })
+    );
 
     return { data: containerListSchema.parse(data), error: null };
   } catch (error) {

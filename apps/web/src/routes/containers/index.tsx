@@ -16,7 +16,7 @@ export const Route = createFileRoute("/containers/")({
 });
 
 function formatContainerMetric(value: number | null) {
-  return value === null ? "--" : `${String(value).padStart(2, "0")}%`;
+  return value === null ? "--" : `${value.toFixed(1)}%`;
 }
 
 function RouteComponent() {

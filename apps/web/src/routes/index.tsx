@@ -1,9 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, HardDrive, Network } from "lucide-react";
+import { useEffect, useState } from "react";
 import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { Button } from "#/components/ui/button";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
-import { getContainersFn } from "#/features/containers/functions";
+import {
+  getContainersFn,
+  streamContainersFn,
+} from "#/features/containers/functions";
 import { NodeState } from "#/features/nodes/components/node-state";
 import { cn } from "#/lib/utils";
 
@@ -54,11 +58,36 @@ const images = [
 ];
 
 function formatContainerMetric(value: number | null) {
-  return value === null ? "--" : `${String(value).padStart(2, "0")}%`;
+  return value === null ? "--" : `${value.toFixed(1)}%`;
 }
 
 function Home() {
-  const containers = Route.useLoaderData();
+  const initialContainers = Route.useLoaderData();
+  const [containers, setContainers] = useState(initialContainers);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function readContainers() {
+      for await (const nextContainers of await streamContainersFn()) {
+        if (cancelled) {
+          break;
+        }
+
+        setContainers(nextContainers);
+      }
+    }
+
+    readContainers().catch((error) => {
+      if (!cancelled) {
+        console.error(error);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
