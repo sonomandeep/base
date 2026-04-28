@@ -1,0 +1,109 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: webapp-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+
+  redis:
+    image: redis:7-alpine
+    container_name: webapp-cache
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 32M
+
+  traefik:
+    image: traefik:v3.3
+    container_name: webapp-proxy
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - frontend
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 32M
+
+  whoami:
+    image: traefik/whoami
+    container_name: webapp-api
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - traefik
+      - postgres
+      - redis
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 64M
+        reservations:
+          cpus: "0.05"
+          memory: 16M
+
+volumes:
+  postgres_data:
+    name: webapp_postgres_data
+  redis_data:
+    name: webapp_redis_data
+
+networks:
+  frontend:
+    name: webapp_frontend
+    driver: bridge
+
+  backend:
+    name: webapp_backend
+    driver: bridge
+    internal: true
