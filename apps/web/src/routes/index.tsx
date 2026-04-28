@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, HardDrive, Network } from "lucide-react";
+import prettyBytes from "pretty-bytes";
 import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { Button } from "#/components/ui/button";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
@@ -12,6 +13,7 @@ import {
 import { getContainersFn } from "#/features/containers/functions";
 import { getNetworkStateSummaryFn } from "#/features/networks/functions";
 import { NodeState } from "#/features/nodes/components/node-state";
+import { getVolumeStateSummaryFn } from "#/features/volumes/functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,14 +21,19 @@ export const Route = createFileRoute("/")({
   }),
   component: Home,
   loader: async () => {
-    const [containers, networks] = await Promise.all([
+    const [containers, networks, volumes] = await Promise.all([
       getContainersFn(),
       getNetworkStateSummaryFn(),
+      getVolumeStateSummaryFn(),
     ]);
 
-    return { containers, networks };
+    return { containers, networks, volumes };
   },
 });
+
+function formatBytes(bytes: number) {
+  return prettyBytes(bytes, { maximumFractionDigits: 0 });
+}
 
 const images = [
   {
@@ -118,8 +125,12 @@ function Home() {
           </div>
 
           <div className="inline-flex items-baseline gap-3 font-mono">
-            <h1 className="font-medium text-lg">9</h1>
-            <span className="text-muted-foreground text-xs">16.2 GB</span>
+            <h1 className="font-medium text-lg">
+              {loader.volumes ? loader.volumes.total : "--"}
+            </h1>
+            <span className="text-muted-foreground text-xs">
+              {loader.volumes ? formatBytes(loader.volumes.size) : "--"}
+            </span>
           </div>
         </div>
       </section>
