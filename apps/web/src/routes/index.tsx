@@ -53,6 +53,10 @@ const images = [
   },
 ];
 
+function formatContainerMetric(value: number | null) {
+  return value === null ? "--" : `${String(value).padStart(2, "0")}%`;
+}
+
 function Home() {
   const containers = Route.useLoaderData();
 
@@ -110,14 +114,14 @@ function Home() {
                     <div className="inline-flex items-baseline gap-1">
                       <p className="text-muted-foreground text-xs">CPU</p>
                       <p className="text-sm">
-                        {String(container.cpu).padStart(2, "0")}%
+                        {formatContainerMetric(container.cpu)}
                       </p>
                     </div>
 
                     <div className="inline-flex items-baseline gap-1">
                       <p className="text-muted-foreground text-xs">RAM</p>
                       <p className="text-sm">
-                        {String(container.ram).padStart(2, "0")}%
+                        {formatContainerMetric(container.ram)}
                       </p>
                     </div>
                   </div>

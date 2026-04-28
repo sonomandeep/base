@@ -15,6 +15,10 @@ export const Route = createFileRoute("/containers/")({
   },
 });
 
+function formatContainerMetric(value: number | null) {
+  return value === null ? "--" : `${String(value).padStart(2, "0")}%`;
+}
+
 function RouteComponent() {
   const loader = Route.useLoaderData();
 
@@ -65,14 +69,14 @@ function RouteComponent() {
                     <div className="inline-flex items-baseline gap-1">
                       <p className="text-muted-foreground text-xs">CPU</p>
                       <p className="text-sm">
-                        {String(container.cpu).padStart(2, "0")}%
+                        {formatContainerMetric(container.cpu)}
                       </p>
                     </div>
 
                     <div className="inline-flex items-baseline gap-1">
                       <p className="text-muted-foreground text-xs">RAM</p>
                       <p className="text-sm">
-                        {String(container.ram).padStart(2, "0")}%
+                        {formatContainerMetric(container.ram)}
                       </p>
                     </div>
                   </div>
