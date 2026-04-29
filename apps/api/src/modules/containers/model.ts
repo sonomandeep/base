@@ -1,8 +1,9 @@
-import { t, type UnwrapSchema } from "elysia";
+import type { UnwrapSchema } from "elysia";
+import { z } from "zod";
 
 export const ContainerModel = {
-  containersResponse: t.Object({
-    id: t.String(),
+  containersResponse: z.object({
+    id: z.string(),
   }),
 };
 
