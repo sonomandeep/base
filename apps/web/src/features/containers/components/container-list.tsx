@@ -7,8 +7,8 @@ import {
   useState,
 } from "react";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
-import { streamContainersFn } from "#/features/containers/functions";
 import type { ContainerListItem } from "#/features/containers/schema";
+import { api } from "#/lib/api/client";
 import { cn } from "#/lib/utils";
 
 interface ContainerListContextValue {
@@ -64,26 +64,42 @@ export function ContainerList({
       return;
     }
 
-    let cancelled = false;
+    const controller = new AbortController();
 
     async function readContainers() {
-      for await (const nextContainers of await streamContainersFn()) {
-        if (cancelled) {
-          break;
+      const { data, error } = await api.containers.stream.get({
+        fetch: { signal: controller.signal },
+      });
+
+      if (error) {
+        console.error(error.value);
+
+        return;
+      }
+
+      for await (const event of data) {
+        if (controller.signal.aborted) {
+          return;
         }
 
-        setContainers(nextContainers);
+        if (event.event === "containers" && event.data) {
+          setContainers(event.data);
+        }
+
+        if (event.event === "containers.error") {
+          console.error(event.data);
+        }
       }
     }
 
     readContainers().catch((error) => {
-      if (!cancelled) {
+      if (!controller.signal.aborted) {
         console.error(error);
       }
     });
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, [stream]);
 

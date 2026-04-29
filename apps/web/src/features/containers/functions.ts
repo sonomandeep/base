@@ -1,25 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
-import { sleep } from "#/lib/utils";
-import { getContainers } from "./service.server";
+import { api } from "#/lib/api/client";
 
 export const getContainersFn = createServerFn().handler(async () => {
-  const { data, error } = await getContainers();
+  const { data, error } = await api.containers.get();
   if (error) {
-    console.error(error);
+    console.error(error.value);
+
+    return [];
   }
 
   return data;
-});
-
-export const streamContainersFn = createServerFn().handler(async function* () {
-  while (true) {
-    const { data, error } = await getContainers({ withStats: true });
-    if (error) {
-      console.error(error);
-    }
-
-    yield data;
-
-    await sleep(1000);
-  }
 });
