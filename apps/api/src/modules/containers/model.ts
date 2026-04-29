@@ -1,22 +1,44 @@
-import { z } from "zod";
+import { t, type UnwrapSchema } from "elysia";
 
-export const containerStateSchema = z.enum(["DEGRADED", "HEALTHY", "STOPPED"]);
-
-export type ContainerState = z.infer<typeof containerStateSchema>;
-
-export const containerSchema = z.object({
-  cpu: z.number().nullable(),
-  id: z.string(),
-  image: z.string(),
-  name: z.string(),
-  ram: z.number().nullable(),
-  state: containerStateSchema,
-});
+const containerState = t.Union(
+  [t.Literal("DEGRADED"), t.Literal("HEALTHY"), t.Literal("STOPPED")],
+  {
+    description:
+      "Normalized container state derived from Docker state and health status.",
+  }
+);
 
 export const ContainerModel = {
-  containersResponse: z.array(containerSchema),
-};
+  state: containerState,
+  list: t.Array(
+    t.Object({
+      cpu: t.Nullable(
+        t.Number({
+          description:
+            "CPU usage percentage, or null when stats are unavailable.",
+        })
+      ),
+      id: t.String({ description: "Docker container ID." }),
+      image: t.String({ description: "Container image name." }),
+      name: t.String({
+        description: "Display name without the leading slash.",
+      }),
+      ram: t.Nullable(
+        t.Number({
+          description:
+            "Memory usage percentage, or null when stats are unavailable.",
+        })
+      ),
+      state: containerState,
+    }),
+    {
+      description: "Containers visible from the configured Docker socket.",
+    }
+  ),
+} as const;
+
+export type ContainerState = UnwrapSchema<typeof ContainerModel.state>;
 
 export type ContainerModel = {
-  [k in keyof typeof ContainerModel]: z.infer<(typeof ContainerModel)[k]>;
+  [k in keyof typeof ContainerModel]: UnwrapSchema<(typeof ContainerModel)[k]>;
 };

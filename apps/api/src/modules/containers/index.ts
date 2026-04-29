@@ -3,10 +3,20 @@ import { ContainerModel } from "./model";
 import { getContainers } from "./service";
 
 export const containers = new Elysia({
-  detail: { tags: ["containers"] },
   prefix: "/containers",
-}).get("/", () => getContainers(), {
-  response: {
-    200: ContainerModel.containersResponse,
-  },
-});
+  tags: ["Containers"],
+})
+  .model({
+    "container.list": ContainerModel.list,
+  })
+  .get("/", () => getContainers(), {
+    detail: {
+      description:
+        "Returns Docker containers visible from the configured Docker socket.",
+      operationId: "listContainers",
+      summary: "List containers",
+    },
+    response: {
+      200: "container.list",
+    },
+  });

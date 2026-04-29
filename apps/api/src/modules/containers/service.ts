@@ -23,9 +23,7 @@ function getContainerState(state?: string, status?: string): ContainerState {
     : "STOPPED";
 }
 
-export async function getContainers(): Promise<
-  ContainerModel["containersResponse"]
-> {
+export async function getContainers(): Promise<ContainerModel["list"]> {
   const containers = await client.listContainers({ all: true });
 
   return containers.map((container) => ({
