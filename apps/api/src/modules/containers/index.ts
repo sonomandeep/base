@@ -27,13 +27,14 @@ export const containers = new Elysia({
     "/stream",
     async ({ request, status }) => {
       try {
-        const initialContainers = await getContainers();
+        const initialContainers = await getContainers({ withStats: true });
 
         return (async function* () {
           try {
             for await (const containers of streamContainerSnapshots(
               initialContainers,
-              request.signal
+              request.signal,
+              { withStats: true }
             )) {
               yield sse({ event: "containers", data: containers });
             }
@@ -59,7 +60,7 @@ export const containers = new Elysia({
               "text/event-stream": {
                 schema: {
                   example:
-                    'event: containers\\ndata: [{"id":"...","name":"...","image":"...","state":"HEALTHY","cpu":null,"ram":null}]\\n\\n',
+                    'event: containers\\ndata: [{"id":"...","name":"...","image":"...","state":"HEALTHY","cpu":2.1,"ram":14.8}]\\n\\n',
                   type: "string",
                 },
               },
