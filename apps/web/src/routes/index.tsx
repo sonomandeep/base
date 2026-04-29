@@ -11,6 +11,7 @@ import {
   ContainerListTitle,
 } from "#/features/containers/components/container-list";
 import { getContainersFn } from "#/features/containers/functions";
+import { getImagesFn } from "#/features/images/functions";
 import { getNetworkStateSummaryFn } from "#/features/networks/functions";
 import { NodeState } from "#/features/nodes/components/node-state";
 import { getVolumeStateSummaryFn } from "#/features/volumes/functions";
@@ -21,13 +22,14 @@ export const Route = createFileRoute("/")({
   }),
   component: Home,
   loader: async () => {
-    const [containers, networks, volumes] = await Promise.all([
+    const [containers, images, networks, volumes] = await Promise.all([
       getContainersFn(),
+      getImagesFn(),
       getNetworkStateSummaryFn(),
       getVolumeStateSummaryFn(),
     ]);
 
-    return { containers, networks, volumes };
+    return { containers, images, networks, volumes };
   },
 });
 
@@ -35,46 +37,9 @@ function formatBytes(bytes: number) {
   return prettyBytes(bytes, { maximumFractionDigits: 0 });
 }
 
-const images = [
-  {
-    id: 1,
-    name: "Nginx",
-    tag: "latest",
-    registry: "DOCKER HUB",
-    disk: 37,
-  },
-  {
-    id: 2,
-    name: "Postgres",
-    tag: "latest",
-    registry: "DOCKER HUB",
-    disk: 379,
-  },
-  {
-    id: 3,
-    name: "Redis",
-    tag: "6-alpine",
-    registry: "DOCKER HUB",
-    disk: 32,
-  },
-  {
-    id: 4,
-    name: "Auth Service",
-    tag: "v2",
-    registry: "GHCR",
-    disk: 128,
-  },
-  {
-    id: 5,
-    name: "Notification Service",
-    tag: "4.0.1",
-    registry: "AWS ECR",
-    disk: 214,
-  },
-];
-
 function Home() {
   const loader = Route.useLoaderData();
+  const images = loader.images.slice(0, 5);
 
   return (
     <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
@@ -150,7 +115,7 @@ function Home() {
               key={image.id}
               render={
                 <Link
-                  params={{ imageId: String(image.id) }}
+                  params={{ imageId: image.id }}
                   to="/images/$imageId"
                 >
                   <ItemContent className="flex-none flex-row items-baseline gap-2">
@@ -160,16 +125,8 @@ function Home() {
                     <p className="text-muted-foreground text-xs">{image.tag}</p>
                   </ItemContent>
 
-                  <div className="inline-flex gap-4 font-mono">
-                    <div className="inline-flex items-baseline gap-1">
-                      <p className="text-muted-foreground text-xs">REG</p>
-                      <p className="text-sm">{image.registry}</p>
-                    </div>
-
-                    <div className="inline-flex items-baseline gap-1">
-                      <p className="text-muted-foreground text-xs">DISK</p>
-                      <p className="text-sm">{image.disk} MB</p>
-                    </div>
+                  <div className="font-mono text-sm">
+                    {formatBytes(image.size)}
                   </div>
                 </Link>
               }
