@@ -3,7 +3,7 @@ import { client } from "../../lib/client";
 import type { ContainerModel, ContainerState } from "./model";
 
 const CONTAINER_NAME_PREFIX = /^\//;
-const STREAM_INTERVAL_MS = 1000;
+const STREAM_INTERVAL_MS = 2500;
 
 interface GetContainersOptions {
   withStats?: boolean;

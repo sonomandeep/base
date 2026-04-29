@@ -1,0 +1,17 @@
+{
+  "name": "@base/api-client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@elysia/eden": "^1.4.10",
+    "api": "workspace:*",
+    "elysia": "^1.4.28"
+  }
+}

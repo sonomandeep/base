@@ -1,27 +1,10 @@
-import openapi from "@elysia/openapi";
+import { cors } from "@elysia/cors";
 import { Elysia } from "elysia";
-import { containers } from "./modules/containers";
+import { api } from "./app";
 
-const app = new Elysia()
-  .use(
-    openapi({
-      documentation: {
-        info: {
-          description: "API for Docker and Podman resource management.",
-          title: "Base API",
-          version: "1.0.0",
-        },
-        tags: [
-          {
-            description: "Container discovery and state endpoints.",
-            name: "Containers",
-          },
-        ],
-      },
-    })
-  )
-  .use(containers)
-  .get("/", () => "Hello Elysia")
+const app = new Elysia({ prefix: "/api" })
+  .use(cors({ origin: process.env.WEB_ORIGIN ?? true }))
+  .use(api)
   .listen(8080);
 
 console.log(

@@ -5,7 +5,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts"
   },
+  "types": "./src/app.ts",
+  "exports": {
+    ".": {
+      "types": "./src/app.ts"
+    }
+  },
   "dependencies": {
+    "@elysia/cors": "latest",
     "@elysia/openapi": "^1.4.15",
     "dockerode": "^5.0.0",
     "elysia": "latest"
