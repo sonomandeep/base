@@ -10,6 +10,11 @@ const containerState = t.Union(
 
 export const ContainerModel = {
   state: containerState,
+  error: t.Object({
+    message: t.String({
+      description: "Human-readable error message.",
+    }),
+  }),
   list: t.Array(
     t.Object({
       cpu: t.Nullable(
