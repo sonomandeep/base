@@ -1,10 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getImages } from "./service.server";
+import { api } from "#/lib/api/client";
 
 export const getImagesFn = createServerFn().handler(async () => {
-  const { data, error } = await getImages();
+  const { data, error } = await api.images.get();
+
   if (error) {
-    console.error(error);
+    console.error(error.value);
+    return [];
   }
 
   return data;
