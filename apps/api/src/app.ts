@@ -1,6 +1,7 @@
 import openapi from "@elysia/openapi";
 import { Elysia } from "elysia";
 import { containers } from "./modules/containers";
+import { images } from "./modules/images";
 
 export const api = new Elysia()
   .use(
@@ -16,11 +17,16 @@ export const api = new Elysia()
             description: "Container discovery and state endpoints.",
             name: "Containers",
           },
+          {
+            description: "Image discovery and disk usage endpoints.",
+            name: "Images",
+          },
         ],
       },
     })
   )
   .use(containers)
+  .use(images)
   .get("/", () => "Hello Elysia");
 
 export type Api = typeof api;
