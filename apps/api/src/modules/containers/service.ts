@@ -115,6 +115,37 @@ export async function getContainers({
   );
 }
 
+export async function getContainerSummary(): Promise<
+  | { data: ContainerModel["summary"]; error: null }
+  | { data: null; error: unknown }
+> {
+  try {
+    const containers = await client.listContainers({ all: true });
+    const summary: ContainerModel["summary"] = {
+      degraded: 0,
+      healthy: 0,
+      stopped: 0,
+      total: containers.length,
+    };
+
+    for (const container of containers) {
+      const state = getContainerState(container.State, container.Status);
+
+      if (state === "HEALTHY") {
+        summary.healthy += 1;
+      } else if (state === "DEGRADED") {
+        summary.degraded += 1;
+      } else {
+        summary.stopped += 1;
+      }
+    }
+
+    return { data: summary, error: null };
+  } catch (error) {
+    return { data: null, error };
+  }
+}
+
 export async function* streamContainerSnapshots(
   initialContainers: ContainerModel["list"],
   signal: AbortSignal,

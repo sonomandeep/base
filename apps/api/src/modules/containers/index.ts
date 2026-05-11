@@ -1,8 +1,13 @@
 import { Elysia, sse } from "elysia";
 import { ContainerModel } from "./model";
-import { getContainers, streamContainerSnapshots } from "./service";
+import {
+  getContainerSummary,
+  getContainers,
+  streamContainerSnapshots,
+} from "./service";
 
 const CONTAINERS_ERROR_MESSAGE = "Unable to read containers.";
+const CONTAINER_SUMMARY_ERROR_MESSAGE = "Unable to read container summary.";
 
 export const containers = new Elysia({
   prefix: "/containers",
@@ -11,6 +16,7 @@ export const containers = new Elysia({
   .model({
     "container.error": ContainerModel.error,
     "container.list": ContainerModel.list,
+    "container.summary": ContainerModel.summary,
   })
   .get("/", () => getContainers(), {
     detail: {
@@ -23,6 +29,31 @@ export const containers = new Elysia({
       200: "container.list",
     },
   })
+  .get(
+    "/summary",
+    async ({ status }) => {
+      const { data, error } = await getContainerSummary();
+
+      if (data === null) {
+        console.error(error);
+        return status(500, { message: CONTAINER_SUMMARY_ERROR_MESSAGE });
+      }
+
+      return data;
+    },
+    {
+      detail: {
+        description:
+          "Returns container counts grouped by normalized health state.",
+        operationId: "getContainerSummary",
+        summary: "Get container summary",
+      },
+      response: {
+        200: "container.summary",
+        500: "container.error",
+      },
+    }
+  )
   .get(
     "/stream",
     async ({ request, status }) => {

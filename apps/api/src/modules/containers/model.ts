@@ -40,6 +40,24 @@ export const ContainerModel = {
       description: "Containers visible from the configured Docker socket.",
     }
   ),
+  summary: t.Object({
+    degraded: t.Number({
+      description: "Number of degraded containers.",
+      minimum: 0,
+    }),
+    healthy: t.Number({
+      description: "Number of healthy containers.",
+      minimum: 0,
+    }),
+    stopped: t.Number({
+      description: "Number of stopped containers.",
+      minimum: 0,
+    }),
+    total: t.Number({
+      description: "Total number of Docker containers.",
+      minimum: 0,
+    }),
+  }),
 } as const;
 
 export type ContainerState = UnwrapSchema<typeof ContainerModel.state>;
