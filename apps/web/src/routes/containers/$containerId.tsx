@@ -12,24 +12,11 @@ import prettyBytes from "pretty-bytes";
 import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { Button } from "#/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs";
-import { api } from "#/lib/api/client";
+import { getContainerFn } from "#/features/containers/functions";
 
 export const Route = createFileRoute("/containers/$containerId")({
   component: RouteComponent,
-  loader: async ({ params }) => {
-    const { data, error } = await api
-      .containers({
-        id: params.containerId,
-      })
-      .get();
-
-    if (error) {
-      console.error(error.value);
-      return null;
-    }
-
-    return data;
-  },
+  loader: ({ params }) => getContainerFn({ data: { id: params.containerId } }),
 });
 
 const tabs = ["Logs", "Shell", "Networks", "Envs", "Volumes", "Ports"];
