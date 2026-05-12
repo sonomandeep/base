@@ -3,6 +3,7 @@ import { Elysia } from "elysia";
 import { containers } from "./modules/containers";
 import { hosts } from "./modules/hosts";
 import { images } from "./modules/images";
+import { volumes } from "./modules/volumes";
 
 export const api = new Elysia()
   .use(
@@ -26,6 +27,10 @@ export const api = new Elysia()
             description: "Host state and resource usage endpoints.",
             name: "Hosts",
           },
+          {
+            description: "Volume discovery and disk usage endpoints.",
+            name: "Volumes",
+          },
         ],
       },
     })
@@ -33,6 +38,7 @@ export const api = new Elysia()
   .use(containers)
   .use(hosts)
   .use(images)
+  .use(volumes)
   .get("/", () => "Hello Elysia");
 
 export type Api = typeof api;
