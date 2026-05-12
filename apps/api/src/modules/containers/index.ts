@@ -1,19 +1,31 @@
-import { Elysia, sse } from "elysia";
+import { Elysia, sse, t } from "elysia";
 import { ContainerModel } from "./model";
 import {
+  getContainer,
   getContainerSummary,
   getContainers,
   streamContainerSnapshots,
 } from "./service";
 
 const CONTAINERS_ERROR_MESSAGE = "Unable to read containers.";
+const CONTAINER_NOT_FOUND_MESSAGE = "Container not found.";
 const CONTAINER_SUMMARY_ERROR_MESSAGE = "Unable to read container summary.";
+
+function isNotFoundError(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "statusCode" in error &&
+    error.statusCode === 404
+  );
+}
 
 export const containers = new Elysia({
   prefix: "/containers",
   tags: ["Containers"],
 })
   .model({
+    "container.detail": ContainerModel.detail,
     "container.error": ContainerModel.error,
     "container.list": ContainerModel.list,
     "container.summary": ContainerModel.summary,
@@ -107,6 +119,40 @@ export const containers = new Elysia({
         summary: "Stream containers",
       },
       response: {
+        500: "container.error",
+      },
+    }
+  )
+  .get(
+    "/:id",
+    async ({ params, status }) => {
+      const { data, error } = await getContainer(params.id);
+
+      if (data === null) {
+        console.error(error);
+
+        if (isNotFoundError(error)) {
+          return status(404, { message: CONTAINER_NOT_FOUND_MESSAGE });
+        }
+
+        return status(500, { message: CONTAINERS_ERROR_MESSAGE });
+      }
+
+      return data;
+    },
+    {
+      detail: {
+        description:
+          "Returns Docker container details for the given container ID.",
+        operationId: "getContainer",
+        summary: "Get container",
+      },
+      params: t.Object({
+        id: t.String({ description: "Docker container ID or name." }),
+      }),
+      response: {
+        200: "container.detail",
+        404: "container.error",
         500: "container.error",
       },
     }

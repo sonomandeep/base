@@ -10,6 +10,10 @@ interface GetContainersOptions {
   withStats?: boolean;
 }
 
+type ContainerDetailResult =
+  | { data: ContainerModel["detail"]; error: null }
+  | { data: null; error: unknown };
+
 function getContainerName(id: string, names: string[]) {
   return names[0]?.replace(CONTAINER_NAME_PREFIX, "") || id.slice(0, 12);
 }
@@ -58,7 +62,7 @@ function getContainerRam(stats: Dockerode.ContainerStats) {
 
 async function getContainerStats(id: string, state: ContainerState) {
   if (state === "STOPPED") {
-    return { cpu: null, ram: null };
+    return { cpu: null, memoryLimit: null, ram: null };
   }
 
   try {
@@ -66,11 +70,115 @@ async function getContainerStats(id: string, state: ContainerState) {
 
     return {
       cpu: getContainerCpu(stats),
+      memoryLimit: stats.memory_stats.limit || null,
       ram: getContainerRam(stats),
     };
   } catch {
-    return { cpu: null, ram: null };
+    return { cpu: null, memoryLimit: null, ram: null };
   }
+}
+
+function getContainerCpuLimit(inspect: Dockerode.ContainerInspectInfo) {
+  const hostConfig =
+    inspect.HostConfig as Dockerode.ContainerInspectInfo["HostConfig"] & {
+      CpuPeriod?: number;
+      CpuQuota?: number;
+      NanoCpus?: number;
+    };
+
+  if (hostConfig.NanoCpus && hostConfig.NanoCpus > 0) {
+    return hostConfig.NanoCpus / 1_000_000_000;
+  }
+
+  if (
+    hostConfig.CpuQuota &&
+    hostConfig.CpuQuota > 0 &&
+    hostConfig.CpuPeriod &&
+    hostConfig.CpuPeriod > 0
+  ) {
+    return hostConfig.CpuQuota / hostConfig.CpuPeriod;
+  }
+
+  return null;
+}
+
+function getContainerUptimeSeconds(startedAt?: string, running?: boolean) {
+  if (!(running && startedAt) || startedAt.startsWith("0001-")) {
+    return null;
+  }
+
+  const startedAtTime = new Date(startedAt).getTime();
+
+  if (Number.isNaN(startedAtTime)) {
+    return null;
+  }
+
+  return Math.max(Math.floor((Date.now() - startedAtTime) / 1000), 0);
+}
+
+function getContainerDisk(inspect: Dockerode.ContainerInspectInfo) {
+  const sizes = inspect as Dockerode.ContainerInspectInfo & {
+    SizeRootFs?: number;
+    SizeRw?: number;
+  };
+  const size = sizes.SizeRootFs ?? sizes.SizeRw ?? null;
+  const writableSize = sizes.SizeRw ?? null;
+
+  return {
+    size,
+    usage:
+      size && writableSize !== null
+        ? Number(((writableSize / size) * 100).toFixed(1))
+        : null,
+  };
+}
+
+function getContainerPorts(inspect: Dockerode.ContainerInspectInfo) {
+  return Object.entries(inspect.NetworkSettings.Ports ?? {}).flatMap(
+    ([port, bindings]) => {
+      const [privatePort, type = "tcp"] = port.split("/");
+      const parsedPrivatePort = Number(privatePort);
+
+      if (!bindings || bindings.length === 0) {
+        return [
+          {
+            ip: null,
+            privatePort: parsedPrivatePort,
+            publicPort: null,
+            type,
+          },
+        ];
+      }
+
+      return bindings.map((binding) => ({
+        ip: binding.HostIp || null,
+        privatePort: parsedPrivatePort,
+        publicPort: binding.HostPort ? Number(binding.HostPort) : null,
+        type,
+      }));
+    }
+  );
+}
+
+function getContainerNetworks(inspect: Dockerode.ContainerInspectInfo) {
+  return Object.entries(inspect.NetworkSettings.Networks ?? {}).map(
+    ([name, network]) => ({
+      id: network.NetworkID ?? "",
+      ipAddress: network.IPAddress ?? "",
+      macAddress: network.MacAddress ?? "",
+      name,
+    })
+  );
+}
+
+function getContainerMounts(inspect: Dockerode.ContainerInspectInfo) {
+  return (inspect.Mounts ?? []).map((mount) => ({
+    destination: mount.Destination ?? "",
+    name: mount.Name ?? null,
+    rw: mount.RW ?? false,
+    source: mount.Source ?? "",
+    type: mount.Type ?? "",
+  }));
 }
 
 export async function getContainers({
@@ -123,6 +231,60 @@ export async function getContainerSummary(): Promise<
     }
 
     return { data: summary, error: null };
+  } catch (error) {
+    return { data: null, error };
+  }
+}
+
+export async function getContainer(id: string): Promise<ContainerDetailResult> {
+  try {
+    const container = client.getContainer(id);
+    const inspect = await (
+      container.inspect as unknown as (options: {
+        size: boolean;
+      }) => Promise<Dockerode.ContainerInspectInfo>
+    )({ size: true });
+    const status = inspect.State.Status ?? "unknown";
+    const health = inspect.State.Health?.Status;
+    const state = getContainerState(
+      status,
+      health ? `${status} (${health})` : status
+    );
+    const stats = await getContainerStats(inspect.Id, state);
+
+    return {
+      data: {
+        cpu: {
+          limitCores: getContainerCpuLimit(inspect),
+          usage: stats.cpu,
+        },
+        createdAt: inspect.Created ?? null,
+        disk: getContainerDisk(inspect),
+        finishedAt: inspect.State.FinishedAt ?? null,
+        id: inspect.Id,
+        image: inspect.Config.Image ?? inspect.Image,
+        memory: {
+          limit: stats.memoryLimit,
+          usage: stats.ram,
+        },
+        mounts: getContainerMounts(inspect),
+        name:
+          inspect.Name?.replace(CONTAINER_NAME_PREFIX, "") ||
+          inspect.Id.slice(0, 12),
+        networks: getContainerNetworks(inspect),
+        ports: getContainerPorts(inspect),
+        restartCount: inspect.RestartCount ?? 0,
+        shortId: inspect.Id.slice(0, 12),
+        startedAt: inspect.State.StartedAt ?? null,
+        state,
+        status,
+        uptimeSeconds: getContainerUptimeSeconds(
+          inspect.State.StartedAt,
+          inspect.State.Running
+        ),
+      },
+      error: null,
+    };
   } catch (error) {
     return { data: null, error };
   }
