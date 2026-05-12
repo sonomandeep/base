@@ -3,6 +3,7 @@ import { Elysia } from "elysia";
 import { containers } from "./modules/containers";
 import { hosts } from "./modules/hosts";
 import { images } from "./modules/images";
+import { networks } from "./modules/networks";
 import { volumes } from "./modules/volumes";
 
 export const api = new Elysia()
@@ -31,6 +32,10 @@ export const api = new Elysia()
             description: "Volume discovery and disk usage endpoints.",
             name: "Volumes",
           },
+          {
+            description: "Network discovery and connectivity endpoints.",
+            name: "Networks",
+          },
         ],
       },
     })
@@ -38,6 +43,7 @@ export const api = new Elysia()
   .use(containers)
   .use(hosts)
   .use(images)
+  .use(networks)
   .use(volumes)
   .get("/", () => "Hello Elysia");
 
