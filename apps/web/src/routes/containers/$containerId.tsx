@@ -8,46 +8,96 @@ import {
   Save,
   Square,
 } from "lucide-react";
+import prettyBytes from "pretty-bytes";
 import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { Button } from "#/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs";
+import { api } from "#/lib/api/client";
 
 export const Route = createFileRoute("/containers/$containerId")({
   component: RouteComponent,
+  loader: async ({ params }) => {
+    const { data, error } = await api
+      .containers({
+        id: params.containerId,
+      })
+      .get();
+
+    if (error) {
+      console.error(error.value);
+      return null;
+    }
+
+    return data;
+  },
 });
 
-const container = {
-  cpu: {
-    cores: "12 vCPU",
-    usage: "24%",
-  },
-  disk: {
-    total: "512 GB",
-    usage: "38%",
-  },
-  id: "a3f1c9e4b7d2",
-  image: "nginx:latest",
-  memory: {
-    total: "64 GB",
-    usage: "73%",
-  },
-  name: "API Gateway",
-  networks: "2 attached",
-  restarts: "No restarts",
-  uptime: "14 days",
-  volumes: "No volumes",
-};
-
-const info = [
-  { label: "ID", value: container.id },
-  { label: "Image", value: container.image },
-  { label: "Restarts", value: container.restarts },
-  { label: "Uptime", value: container.uptime },
-  { label: "Networks", value: container.networks },
-  { label: "Volumes", value: container.volumes },
-];
-
 const tabs = ["Logs", "Shell", "Networks", "Envs", "Volumes", "Ports"];
+
+function formatPercent(value: number | null) {
+  return value === null ? "--" : `${value.toFixed(0)}%`;
+}
+
+function formatBytes(bytes: number | null, options?: { binary?: boolean }) {
+  return bytes === null
+    ? "--"
+    : prettyBytes(bytes, {
+        binary: options?.binary,
+        maximumFractionDigits: 0,
+      });
+}
+
+function formatCpuLimit(limitCores: number | null) {
+  return limitCores === null ? "--" : `${limitCores.toFixed(1)} vCPU`;
+}
+
+function formatRestarts(restartCount: number) {
+  if (restartCount === 0) {
+    return "No restarts";
+  }
+
+  return restartCount === 1 ? "1 restart" : `${restartCount} restarts`;
+}
+
+function formatUptime(seconds: number | null) {
+  if (seconds === null) {
+    return "--";
+  }
+
+  const days = Math.floor(seconds / 86_400);
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor(seconds / 60);
+
+  if (days > 0) {
+    return days === 1 ? "1 day" : `${days} days`;
+  }
+
+  if (hours > 0) {
+    return hours === 1 ? "1 hour" : `${hours} hours`;
+  }
+
+  if (minutes > 0) {
+    return minutes === 1 ? "1 minute" : `${minutes} minutes`;
+  }
+
+  return "Less than a minute";
+}
+
+function formatNetworks(count: number) {
+  if (count === 0) {
+    return "No networks";
+  }
+
+  return count === 1 ? "1 attached" : `${count} attached`;
+}
+
+function formatVolumes(count: number) {
+  if (count === 0) {
+    return "No volumes";
+  }
+
+  return count === 1 ? "1 volume" : `${count} volumes`;
+}
 
 function MetricCard({
   icon: Icon,
@@ -76,6 +126,30 @@ function MetricCard({
 }
 
 function RouteComponent() {
+  const container = Route.useLoaderData();
+
+  if (!container) {
+    return (
+      <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
+        <DashboardHeader />
+        <section className="px-4">
+          <div className="rounded-xl bg-muted p-4">
+            <h1 className="font-medium">Container not found</h1>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  const info = [
+    { label: "ID", value: container.shortId },
+    { label: "Image", value: container.image },
+    { label: "Restarts", value: formatRestarts(container.restartCount) },
+    { label: "Uptime", value: formatUptime(container.uptimeSeconds) },
+    { label: "Networks", value: formatNetworks(container.networks.length) },
+    { label: "Volumes", value: formatVolumes(container.mounts.length) },
+  ];
+
   return (
     <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
       <DashboardHeader />
@@ -101,20 +175,20 @@ function RouteComponent() {
           <MetricCard
             icon={Cpu}
             label="CPU"
-            secondary={container.cpu.cores}
-            value={container.cpu.usage}
+            secondary={formatCpuLimit(container.cpu.limitCores)}
+            value={formatPercent(container.cpu.usage)}
           />
           <MetricCard
             icon={MemoryStick}
             label="RAM"
-            secondary={container.memory.total}
-            value={container.memory.usage}
+            secondary={formatBytes(container.memory.limit, { binary: true })}
+            value={formatPercent(container.memory.usage)}
           />
           <MetricCard
             icon={Save}
             label="DISK"
-            secondary={container.disk.total}
-            value={container.disk.usage}
+            secondary={formatBytes(container.disk.size)}
+            value={formatPercent(container.disk.usage)}
           />
         </div>
       </section>
