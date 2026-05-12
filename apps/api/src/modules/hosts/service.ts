@@ -1,5 +1,6 @@
 import { statfs } from "node:fs/promises";
 import os from "node:os";
+import { sleep } from "../../lib/timing";
 import { getContainerSummary } from "../containers/service";
 import { getImageSummary } from "../images/service";
 import type { HostModel } from "./model";
@@ -9,25 +10,6 @@ const HOST_STREAM_INTERVAL_MS = 1000;
 type HostStateResult =
   | { data: HostModel["state"]; error: null }
   | { data: null; error: unknown };
-
-function sleep(ms: number, signal: AbortSignal) {
-  if (signal.aborted) {
-    return Promise.resolve();
-  }
-
-  return new Promise<void>((resolve) => {
-    const timeout = setTimeout(resolve, ms);
-
-    signal.addEventListener(
-      "abort",
-      () => {
-        clearTimeout(timeout);
-        resolve();
-      },
-      { once: true }
-    );
-  });
-}
 
 async function getCpuUsage(): Promise<number> {
   const sample = () =>

@@ -1,5 +1,6 @@
 import type Dockerode from "dockerode";
 import { client } from "../../lib/client";
+import { sleep } from "../../lib/timing";
 import type { ContainerModel, ContainerState } from "./model";
 
 const CONTAINER_NAME_PREFIX = /^\//;
@@ -7,25 +8,6 @@ const STREAM_INTERVAL_MS = 2500;
 
 interface GetContainersOptions {
   withStats?: boolean;
-}
-
-function sleep(ms: number, signal: AbortSignal) {
-  if (signal.aborted) {
-    return Promise.resolve();
-  }
-
-  return new Promise<void>((resolve) => {
-    const timeout = setTimeout(resolve, ms);
-
-    signal.addEventListener(
-      "abort",
-      () => {
-        clearTimeout(timeout);
-        resolve();
-      },
-      { once: true }
-    );
-  });
 }
 
 function getContainerName(id: string, names: string[]) {
