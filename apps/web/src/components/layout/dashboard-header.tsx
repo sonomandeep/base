@@ -12,10 +12,10 @@ export function DashboardHeader() {
   return (
     <header className="inline-flex w-full items-center justify-between px-4">
       <Select
-        defaultValue="all_nodes"
+        defaultValue="all_hosts"
         items={[
           { label: "Select", value: null },
-          { label: "All nodes", value: "all_nodes" },
+          { label: "All hosts", value: "all_hosts" },
         ]}
       >
         <SelectTrigger className="w-32">
@@ -23,7 +23,7 @@ export function DashboardHeader() {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectItem value="all_nodes">All Nodes</SelectItem>
+            <SelectItem value="all_hosts">All Hosts</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

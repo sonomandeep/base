@@ -7,7 +7,7 @@ import {
   ContainerListTitle,
 } from "#/features/containers/components/container-list";
 import { getContainersFn } from "#/features/containers/functions";
-import { NodeState } from "#/features/nodes/components/node-state";
+import { HostState } from "#/features/hosts/components/host-state";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/containers/")({
@@ -25,7 +25,7 @@ function RouteComponent() {
   return (
     <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
       <DashboardHeader />
-      <NodeState />
+      <HostState />
 
       <ContainerList initialContainers={loader.containers}>
         <ContainerListHeader>

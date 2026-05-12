@@ -11,9 +11,9 @@ import {
   ContainerListTitle,
 } from "#/features/containers/components/container-list";
 import { getContainersFn } from "#/features/containers/functions";
+import { HostState } from "#/features/hosts/components/host-state";
 import { getImagesFn } from "#/features/images/functions";
 import { getNetworkStateSummaryFn } from "#/features/networks/functions";
-import { NodeState } from "#/features/nodes/components/node-state";
 import { getVolumeStateSummaryFn } from "#/features/volumes/functions";
 
 export const Route = createFileRoute("/")({
@@ -44,7 +44,7 @@ function Home() {
   return (
     <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
       <DashboardHeader />
-      <NodeState />
+      <HostState />
 
       <ContainerList initialContainers={loader.containers} limit={5} stream>
         <ContainerListHeader>
@@ -114,10 +114,7 @@ function Home() {
               className="w-full flex-nowrap items-center justify-between rounded-lg border-transparent"
               key={image.id}
               render={
-                <Link
-                  params={{ imageId: image.id }}
-                  to="/images/$imageId"
-                >
+                <Link params={{ imageId: image.id }} to="/images/$imageId">
                   <ItemContent className="flex-none flex-row items-baseline gap-2">
                     <ItemTitle className="font-normal text-sm">
                       {image.name}

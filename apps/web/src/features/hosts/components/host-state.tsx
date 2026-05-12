@@ -1,7 +1,11 @@
 import { Box, Cpu, Layers, MemoryStick, Save } from "lucide-react";
 import prettyBytes from "pretty-bytes";
 import { useEffect, useState } from "react";
-import { type HostState, streamHostStateFn } from "#/features/nodes/functions";
+import { api } from "#/lib/api/client";
+
+type HostStateValue = NonNullable<
+  Awaited<ReturnType<typeof api.hosts.current.state.get>>["data"]
+>;
 
 function formatBytes(bytes: number) {
   return prettyBytes(bytes, { maximumFractionDigits: 0 });
@@ -15,30 +19,45 @@ function formatOptionalNumber(value?: number) {
   return value === undefined ? "--" : String(value);
 }
 
-export function NodeState() {
-  const [state, setState] = useState<HostState | null>(null);
+export function HostState() {
+  const [state, setState] = useState<HostStateValue | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     async function readHostState() {
-      for await (const nextState of await streamHostStateFn()) {
-        if (cancelled) {
-          break;
+      const { data, error } = await api.hosts.current.stream.get({
+        fetch: { signal: controller.signal },
+      });
+
+      if (error) {
+        console.error(error.value);
+        return;
+      }
+
+      for await (const event of data) {
+        if (controller.signal.aborted) {
+          return;
         }
 
-        setState(nextState);
+        if (event.event === "hosts.state" && event.data) {
+          setState(event.data);
+        }
+
+        if (event.event === "hosts.error") {
+          console.error(event.data);
+        }
       }
     }
 
     readHostState().catch((error) => {
-      if (!cancelled) {
+      if (!controller.signal.aborted) {
         console.error(error);
       }
     });
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, []);
 
