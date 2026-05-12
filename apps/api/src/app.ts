@@ -1,6 +1,7 @@
 import openapi from "@elysia/openapi";
 import { Elysia } from "elysia";
 import { containers } from "./modules/containers";
+import { hosts } from "./modules/hosts";
 import { images } from "./modules/images";
 
 export const api = new Elysia()
@@ -21,11 +22,16 @@ export const api = new Elysia()
             description: "Image discovery and disk usage endpoints.",
             name: "Images",
           },
+          {
+            description: "Host state and resource usage endpoints.",
+            name: "Hosts",
+          },
         ],
       },
     })
   )
   .use(containers)
+  .use(hosts)
   .use(images)
   .get("/", () => "Hello Elysia");
 
