@@ -1,10 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getVolumeStateSummary } from "./service.server";
+import { api } from "#/lib/api/client";
 
 export const getVolumeStateSummaryFn = createServerFn().handler(async () => {
-  const { data, error } = await getVolumeStateSummary();
+  const { data, error } = await api.volumes.summary.get();
+
   if (error) {
-    console.error(error);
+    console.error(error.value);
+    return null;
   }
 
   return data;
