@@ -39,11 +39,14 @@ export const images = new Elysia({
   .get(
     "/summary",
     async ({ status }) => {
-      try {
-        return await getImageSummary();
-      } catch {
+      const { data, error } = await getImageSummary();
+
+      if (data === null) {
+        console.error(error);
         return status(500, { message: IMAGE_SUMMARY_ERROR_MESSAGE });
       }
+
+      return data;
     },
     {
       detail: {

@@ -42,11 +42,20 @@ export async function getImages(): Promise<ImageModel["list"]> {
   });
 }
 
-export async function getImageSummary(): Promise<ImageModel["summary"]> {
-  const usage = await client.df();
+export async function getImageSummary(): Promise<
+  { data: ImageModel["summary"]; error: null } | { data: null; error: unknown }
+> {
+  try {
+    const usage = await client.df();
 
-  return {
-    size: usage.LayersSize ?? 0,
-    total: usage.Images?.length ?? 0,
-  };
+    return {
+      data: {
+        size: usage.LayersSize ?? 0,
+        total: usage.Images?.length ?? 0,
+      },
+      error: null,
+    };
+  } catch (error) {
+    return { data: null, error };
+  }
 }
