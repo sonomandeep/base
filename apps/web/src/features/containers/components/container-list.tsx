@@ -7,9 +7,12 @@ import {
   useState,
 } from "react";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
-import type { ContainerListItem } from "#/features/containers/schema";
 import { api } from "#/lib/api/client";
 import { cn } from "#/lib/utils";
+
+type ContainerListItem = NonNullable<
+  Awaited<ReturnType<typeof api.containers.get>>["data"]
+>[number];
 
 interface ContainerListContextValue {
   containers: ContainerListItem[];
