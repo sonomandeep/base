@@ -1,9 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
+import { zodValidator } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { api } from "#/lib/api/client";
 
-interface GetContainerInput {
-  id: string;
-}
+const getContainerInputSchema = z.object({
+  id: z.string().min(1),
+});
 
 export const getContainersFn = createServerFn().handler(async () => {
   const { data, error } = await api.containers.get();
@@ -17,7 +19,7 @@ export const getContainersFn = createServerFn().handler(async () => {
 });
 
 export const getContainerFn = createServerFn({ method: "GET" })
-  .inputValidator((data: GetContainerInput) => data)
+  .inputValidator(zodValidator(getContainerInputSchema))
   .handler(async ({ data: input }) => {
     const { data, error } = await api.containers({ id: input.id }).get();
 
