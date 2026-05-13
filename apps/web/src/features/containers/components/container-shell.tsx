@@ -195,7 +195,10 @@ export function ContainerShell({
 
   return (
     <div className="overflow-hidden rounded-xl bg-neutral-950 p-3">
-      <div className="h-96 min-h-80 w-full" ref={terminalElementRef} />
+      <div
+        className="aspect-video w-full overflow-hidden [&_.xterm]:h-full"
+        ref={terminalElementRef}
+      />
     </div>
   );
 }
