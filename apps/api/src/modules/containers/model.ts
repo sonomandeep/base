@@ -105,6 +105,7 @@ export const ContainerModel = {
     name: t.String({ description: "Display name without the leading slash." }),
     networks: t.Array(
       t.Object({
+        driver: t.String({ description: "Docker network driver." }),
         id: t.String({ description: "Network ID." }),
         ipAddress: t.String({ description: "Container IP address." }),
         macAddress: t.String({ description: "Container MAC address." }),

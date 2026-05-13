@@ -160,9 +160,37 @@ function getContainerPorts(inspect: Dockerode.ContainerInspectInfo) {
   );
 }
 
-function getContainerNetworks(inspect: Dockerode.ContainerInspectInfo) {
+async function getNetworkDriverMap() {
+  try {
+    const networks = await client.listNetworks();
+    const drivers = new Map<string, string>();
+
+    for (const network of networks) {
+      const driver = network.Driver ?? "unknown";
+
+      if (network.Id) {
+        drivers.set(network.Id, driver);
+      }
+
+      if (network.Name) {
+        drivers.set(network.Name, driver);
+      }
+    }
+
+    return drivers;
+  } catch {
+    return new Map<string, string>();
+  }
+}
+
+function getContainerNetworks(
+  inspect: Dockerode.ContainerInspectInfo,
+  drivers: Map<string, string>
+) {
   return Object.entries(inspect.NetworkSettings.Networks ?? {}).map(
     ([name, network]) => ({
+      driver:
+        drivers.get(network.NetworkID ?? "") ?? drivers.get(name) ?? "unknown",
       id: network.NetworkID ?? "",
       ipAddress: network.IPAddress ?? "",
       macAddress: network.MacAddress ?? "",
@@ -250,7 +278,10 @@ export async function getContainer(id: string): Promise<ContainerDetailResult> {
       status,
       health ? `${status} (${health})` : status
     );
-    const stats = await getContainerStats(inspect.Id, state);
+    const [networkDrivers, stats] = await Promise.all([
+      getNetworkDriverMap(),
+      getContainerStats(inspect.Id, state),
+    ]);
 
     return {
       data: {
@@ -271,7 +302,7 @@ export async function getContainer(id: string): Promise<ContainerDetailResult> {
         name:
           inspect.Name?.replace(CONTAINER_NAME_PREFIX, "") ||
           inspect.Id.slice(0, 12),
-        networks: getContainerNetworks(inspect),
+        networks: getContainerNetworks(inspect, networkDrivers),
         ports: getContainerPorts(inspect),
         restartCount: inspect.RestartCount ?? 0,
         shortId: inspect.Id.slice(0, 12),
