@@ -29,6 +29,7 @@ import {
   ItemTitle,
 } from "#/components/ui/item";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
+import { ContainerEnvs } from "#/features/containers/components/container-envs";
 import { ContainerShell } from "#/features/containers/components/container-shell";
 import { getContainerFn } from "#/features/containers/functions";
 
@@ -377,6 +378,10 @@ function RouteComponent() {
               </p>
             )}
           </section>
+        </TabsContent>
+
+        <TabsContent value="Envs">
+          <ContainerEnvs envs={container.envs} />
         </TabsContent>
 
         <TabsContent value="Volumes">
