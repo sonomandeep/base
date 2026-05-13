@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Cpu,
   EllipsisVertical,
@@ -11,7 +11,8 @@ import {
 import prettyBytes from "pretty-bytes";
 import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { Button } from "#/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs";
+import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { getContainerFn } from "#/features/containers/functions";
 
 export const Route = createFileRoute("/containers/$containerId")({
@@ -189,33 +190,58 @@ function RouteComponent() {
         ))}
       </section>
 
-      <Tabs className="px-3.5" defaultValue="Logs">
-        <TabsList className="w-full">
-          {tabs.map((tab) => (
-            <TabsTrigger key={tab} value={tab}>
-              {tab}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <Tabs className="flex flex-col gap-y-6" defaultValue="Networks">
+        <div className="px-4">
+          <TabsList className="w-full">
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab} value={tab}>
+                {tab}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
-        {/*   <TabsContent className="px-2" value="Shell"> */}
-        {/*     <div className="flex flex-col gap-5"> */}
-        {/*       <div className="inline-flex items-center justify-between px-2"> */}
-        {/*         <h2 className="font-medium text-xl">Shell</h2> */}
-        {/**/}
-        {/*         <div className="inline-flex items-center gap-2"> */}
-        {/*           <Button size="icon" variant="ghost"> */}
-        {/*             <RefreshCw className="size-4" /> */}
-        {/*           </Button> */}
-        {/*           <Button size="icon" variant="ghost"> */}
-        {/*             <EllipsisVertical className="size-4" /> */}
-        {/*           </Button> */}
-        {/*         </div> */}
-        {/*       </div> */}
-        {/**/}
-        {/*       <div className="min-h-120 rounded-xl bg-muted" /> */}
-        {/*     </div> */}
-        {/*   </TabsContent> */}
+        <TabsContent value="Networks">
+          <section className="flex flex-col gap-3">
+            <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
+              <h2 className="font-medium">Networks</h2>
+            </div>
+
+            {container.networks.length > 0 ? (
+              <ItemGroup className="gap-1">
+                {container.networks.map((network) => (
+                  <Item
+                    className="w-full flex-nowrap items-center justify-between rounded-lg border-transparent"
+                    key={network.id || network.name}
+                    render={
+                      <Link to="/">
+                        <ItemContent className="flex-none flex-row items-baseline gap-2">
+                          <ItemTitle className="font-normal text-sm">
+                            {network.name}
+                          </ItemTitle>
+                          <p className="text-muted-foreground text-xs">
+                            {network.driver}
+                          </p>
+                        </ItemContent>
+
+                        <div className="inline-flex items-baseline gap-2 font-mono text-sm">
+                          <span className="text-muted-foreground text-xs">
+                            IP
+                          </span>
+                          {network.ipAddress || "--"}
+                        </div>
+                      </Link>
+                    }
+                  />
+                ))}
+              </ItemGroup>
+            ) : (
+              <p className="px-2 text-muted-foreground text-sm">
+                No networks attached
+              </p>
+            )}
+          </section>
+        </TabsContent>
       </Tabs>
     </div>
   );
