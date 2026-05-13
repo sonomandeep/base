@@ -165,22 +165,18 @@ export function ContainerShell({ containerId, disabled }: ContainerShellProps) {
 
   if (disabled) {
     return (
-      <section className="px-4">
-        <div className="rounded-xl bg-muted p-4">
-          <h2 className="font-medium">Shell unavailable</h2>
-          <p className="mt-1 text-muted-foreground text-sm">
-            Start the container to open an interactive shell.
-          </p>
-        </div>
-      </section>
+      <div className="rounded-xl bg-muted p-4">
+        <h2 className="font-medium">Shell unavailable</h2>
+        <p className="mt-1 text-muted-foreground text-sm">
+          Start the container to open an interactive shell.
+        </p>
+      </div>
     );
   }
 
   return (
-    <section className="px-4">
-      <div className="overflow-hidden rounded-xl bg-neutral-950 p-3">
-        <div className="h-96 min-h-80 w-full" ref={terminalElementRef} />
-      </div>
-    </section>
+    <div className="overflow-hidden rounded-xl bg-neutral-950 p-3">
+      <div className="h-96 min-h-80 w-full" ref={terminalElementRef} />
+    </div>
   );
 }

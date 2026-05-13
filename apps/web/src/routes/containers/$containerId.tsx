@@ -254,10 +254,18 @@ function RouteComponent() {
         </div>
 
         <TabsContent keepMounted value="Shell">
-          <ContainerShell
-            containerId={container.id}
-            disabled={container.status !== "running"}
-          />
+          <section className="flex flex-col gap-3">
+            <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
+              <h2 className="font-medium">Shell</h2>
+            </div>
+
+            <div className="px-4">
+              <ContainerShell
+                containerId={container.id}
+                disabled={container.status !== "running"}
+              />
+            </div>
+          </section>
         </TabsContent>
 
         <TabsContent value="Networks">
