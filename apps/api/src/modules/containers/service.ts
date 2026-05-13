@@ -1,9 +1,12 @@
 import type Dockerode from "dockerode";
+import type { Duplex } from "node:stream";
 import { client } from "../../lib/client";
 import { sleep } from "../../lib/timing";
 import type { ContainerModel, ContainerState } from "./model";
 
 const CONTAINER_NAME_PREFIX = /^\//;
+const CONTAINER_SHELL_COMMAND =
+  "if command -v bash >/dev/null 2>&1; then exec bash; else exec sh; fi";
 const STREAM_INTERVAL_MS = 2500;
 
 interface GetContainersOptions {
@@ -13,6 +16,28 @@ interface GetContainersOptions {
 type ContainerDetailResult =
   | { data: ContainerModel["detail"]; error: null }
   | { data: null; error: unknown };
+
+export interface ContainerShellSize {
+  cols: number;
+  rows: number;
+}
+
+export interface ContainerShellSession {
+  close: () => void;
+  resize: (size: ContainerShellSize) => Promise<void>;
+  stream: Duplex;
+  write: (data: string) => void;
+}
+
+export class ContainerShellError extends Error {
+  constructor(
+    readonly code: "NOT_RUNNING" | "START_FAILED",
+    message: string
+  ) {
+    super(message);
+    this.name = "ContainerShellError";
+  }
+}
 
 interface DockerVolumeUsage {
   Name?: string;
@@ -348,6 +373,51 @@ export async function getContainer(id: string): Promise<ContainerDetailResult> {
     };
   } catch (error) {
     return { data: null, error };
+  }
+}
+
+export async function createContainerShellSession(
+  id: string,
+  size?: ContainerShellSize
+): Promise<ContainerShellSession> {
+  const container = client.getContainer(id);
+  const inspect = await container.inspect();
+
+  if (!inspect.State.Running) {
+    throw new ContainerShellError("NOT_RUNNING", "Container is not running.");
+  }
+
+  try {
+    const exec = await container.exec({
+      AttachStderr: true,
+      AttachStdin: true,
+      AttachStdout: true,
+      Cmd: ["sh", "-lc", CONTAINER_SHELL_COMMAND],
+      ConsoleSize: size ? [size.rows, size.cols] : undefined,
+      Tty: true,
+    });
+    const stream = await exec.start({ hijack: true, stdin: true, Tty: true });
+
+    return {
+      close: () => {
+        stream.destroy();
+      },
+      resize: async ({ cols, rows }) => {
+        if (cols > 0 && rows > 0) {
+          await exec.resize({ h: rows, w: cols });
+        }
+      },
+      stream,
+      write: (data) => {
+        stream.write(data);
+      },
+    };
+  } catch (error) {
+    if (error instanceof ContainerShellError) {
+      throw error;
+    }
+
+    throw new ContainerShellError("START_FAILED", "Unable to start shell.");
   }
 }
 

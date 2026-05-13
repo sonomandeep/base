@@ -1,6 +1,9 @@
 import { Elysia, sse, t } from "elysia";
 import { ContainerModel } from "./model";
 import {
+  ContainerShellError,
+  type ContainerShellSession,
+  createContainerShellSession,
   getContainer,
   getContainerSummary,
   getContainers,
@@ -9,7 +12,18 @@ import {
 
 const CONTAINERS_ERROR_MESSAGE = "Unable to read containers.";
 const CONTAINER_NOT_FOUND_MESSAGE = "Container not found.";
+const CONTAINER_NOT_RUNNING_MESSAGE = "Container is not running.";
+const CONTAINER_SHELL_ERROR_MESSAGE = "Unable to start container shell.";
 const CONTAINER_SUMMARY_ERROR_MESSAGE = "Unable to read container summary.";
+
+type ContainerShellClientMessage =
+  | { data: string; type: "input" }
+  | { cols: number; rows: number; type: "resize" };
+
+type ShellWebSocketData = {
+  closed?: boolean;
+  shell?: ContainerShellSession;
+};
 
 function isNotFoundError(error: unknown) {
   return (
@@ -18,6 +32,45 @@ function isNotFoundError(error: unknown) {
     "statusCode" in error &&
     error.statusCode === 404
   );
+}
+
+function parseShellMessage(message: unknown): ContainerShellClientMessage | null {
+  try {
+    const parsedMessage =
+      typeof message === "string" ? JSON.parse(message) : message;
+
+    if (typeof parsedMessage !== "object" || parsedMessage === null) {
+      return null;
+    }
+
+    if (
+      "type" in parsedMessage &&
+      parsedMessage.type === "input" &&
+      "data" in parsedMessage &&
+      typeof parsedMessage.data === "string"
+    ) {
+      return parsedMessage;
+    }
+
+    if (
+      "type" in parsedMessage &&
+      parsedMessage.type === "resize" &&
+      "cols" in parsedMessage &&
+      "rows" in parsedMessage &&
+      typeof parsedMessage.cols === "number" &&
+      typeof parsedMessage.rows === "number"
+    ) {
+      return parsedMessage;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function getShellData(data: unknown) {
+  return data as ShellWebSocketData;
 }
 
 export const containers = new Elysia({
@@ -123,6 +176,87 @@ export const containers = new Elysia({
       },
     }
   )
+  .ws("/:id/shell", {
+    async open(ws) {
+      try {
+        const session = await createContainerShellSession(ws.data.params.id);
+        const shellData = getShellData(ws.data);
+
+        shellData.closed = false;
+        shellData.shell = session;
+        session.stream.on("data", (chunk: Buffer | string) => {
+          if (!shellData.closed) {
+            ws.send({ data: chunk.toString(), type: "output" });
+          }
+        });
+        session.stream.on("close", () => {
+          if (!shellData.closed) {
+            ws.send({ type: "closed" });
+          }
+        });
+        session.stream.on("error", (error) => {
+          console.error(error);
+          if (!shellData.closed) {
+            ws.send({ message: CONTAINER_SHELL_ERROR_MESSAGE, type: "error" });
+          }
+        });
+      } catch (error) {
+        console.error(error);
+
+        if (isNotFoundError(error)) {
+          ws.send({ message: CONTAINER_NOT_FOUND_MESSAGE, type: "error" });
+        } else if (
+          error instanceof ContainerShellError &&
+          error.code === "NOT_RUNNING"
+        ) {
+          ws.send({ message: CONTAINER_NOT_RUNNING_MESSAGE, type: "error" });
+        } else {
+          ws.send({ message: CONTAINER_SHELL_ERROR_MESSAGE, type: "error" });
+        }
+
+        ws.close();
+      }
+    },
+    message(ws, message) {
+      const session = getShellData(ws.data).shell;
+
+      if (!session) {
+        return;
+      }
+
+      const parsedMessage = parseShellMessage(message);
+
+      if (!parsedMessage) {
+        ws.send({ message: "Invalid shell message.", type: "error" });
+        return;
+      }
+
+      if (parsedMessage.type === "input") {
+        session.write(parsedMessage.data);
+        return;
+      }
+
+      session.resize(parsedMessage).catch((error) => {
+        console.error(error);
+        ws.send({ message: "Unable to resize shell.", type: "error" });
+      });
+    },
+    close(ws) {
+      const shellData = getShellData(ws.data);
+
+      shellData.closed = true;
+      shellData.shell?.close();
+      shellData.shell = undefined;
+    },
+    detail: {
+      description:
+        "Opens an interactive TTY shell inside the running Docker container.",
+      summary: "Open container shell",
+    },
+    params: t.Object({
+      id: t.String({ description: "Docker container ID or name." }),
+    }),
+  })
   .get(
     "/:id",
     async ({ params, status }) => {
