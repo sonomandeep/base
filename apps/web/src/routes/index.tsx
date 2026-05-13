@@ -103,9 +103,16 @@ function Home() {
       <section className="flex w-full flex-col gap-3">
         <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
           <h2 className="font-medium">Images</h2>
-          <Button className="font-normal text-muted-foreground" variant="ghost">
-            View all <ArrowRight className="size-3" />
-          </Button>
+          <Button
+            className="font-normal text-muted-foreground"
+            nativeButton={false}
+            render={
+              <Link to="/images">
+                View all <ArrowRight className="size-3" />
+              </Link>
+            }
+            variant="ghost"
+          />
         </div>
 
         <ItemGroup className="gap-1">
