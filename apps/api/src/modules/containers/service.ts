@@ -1,5 +1,4 @@
 import type Dockerode from "dockerode";
-import type { Duplex } from "node:stream";
 import { client } from "../../lib/client";
 import { sleep } from "../../lib/timing";
 import type { ContainerModel, ContainerState } from "./model";
@@ -24,10 +23,46 @@ export interface ContainerShellSize {
 
 export interface ContainerShellSession {
   close: () => void;
-  resize: (size: ContainerShellSize) => Promise<void>;
-  stream: Duplex;
+  resize: (size: ContainerShellSize) => void;
   write: (data: string) => void;
 }
+
+interface CreateContainerShellSessionOptions extends ContainerShellSize {
+  onClose: () => void;
+  onData: (data: string) => void;
+  onError: (error: unknown) => void;
+}
+
+interface BunTerminal {
+  readonly closed: boolean;
+  close: () => void;
+  resize: (cols: number, rows: number) => void;
+  write: (data: string) => number;
+}
+
+interface BunSubprocess {
+  readonly exited: Promise<number>;
+  readonly terminal: BunTerminal | undefined;
+  kill: () => void;
+}
+
+type BunSpawn = (
+  command: string[],
+  options: {
+    terminal: {
+      cols: number;
+      data: (terminal: BunTerminal, data: Uint8Array<ArrayBuffer>) => void;
+      exit: () => void;
+      rows: number;
+    };
+  }
+) => BunSubprocess;
+
+const bunRuntime = globalThis as typeof globalThis & {
+  Bun: {
+    spawn: BunSpawn;
+  };
+};
 
 export class ContainerShellError extends Error {
   constructor(
@@ -37,6 +72,70 @@ export class ContainerShellError extends Error {
     super(message);
     this.name = "ContainerShellError";
   }
+}
+
+function createSpawnShellSession(
+  containerId: string,
+  options: CreateContainerShellSessionOptions
+): ContainerShellSession {
+  let closed = false;
+  const closeOnce = () => {
+    if (closed) {
+      return;
+    }
+
+    closed = true;
+    options.onClose();
+  };
+  const process = bunRuntime.Bun.spawn(
+    [
+      "docker",
+      "exec",
+      "-it",
+      containerId,
+      "sh",
+      "-lc",
+      CONTAINER_SHELL_COMMAND,
+    ],
+    {
+      terminal: {
+        cols: options.cols,
+        data: (_, data) => {
+          options.onData(new TextDecoder().decode(data));
+        },
+        exit: closeOnce,
+        rows: options.rows,
+      },
+    }
+  );
+  const terminal = process.terminal;
+
+  if (!terminal) {
+    process.kill();
+    throw new Error("Unable to open terminal.");
+  }
+
+  process.exited.then(closeOnce).catch(options.onError);
+
+  return {
+    close: () => {
+      if (!terminal.closed) {
+        terminal.close();
+      }
+
+      process.kill();
+    },
+    resize: ({ cols, rows }) => {
+      if (!(terminal.closed || cols <= 0 || rows <= 0)) {
+        terminal.resize(cols, rows);
+      }
+    },
+    write: (data) => {
+      if (!terminal.closed) {
+        terminal.write(data.replaceAll("\r", "\n"));
+      }
+    },
+  };
 }
 
 interface DockerVolumeUsage {
@@ -378,7 +477,7 @@ export async function getContainer(id: string): Promise<ContainerDetailResult> {
 
 export async function createContainerShellSession(
   id: string,
-  size?: ContainerShellSize
+  options: CreateContainerShellSessionOptions
 ): Promise<ContainerShellSession> {
   const container = client.getContainer(id);
   const inspect = await container.inspect();
@@ -388,30 +487,7 @@ export async function createContainerShellSession(
   }
 
   try {
-    const exec = await container.exec({
-      AttachStderr: true,
-      AttachStdin: true,
-      AttachStdout: true,
-      Cmd: ["sh", "-lc", CONTAINER_SHELL_COMMAND],
-      ConsoleSize: size ? [size.rows, size.cols] : undefined,
-      Tty: true,
-    });
-    const stream = await exec.start({ hijack: true, stdin: true, Tty: true });
-
-    return {
-      close: () => {
-        stream.destroy();
-      },
-      resize: async ({ cols, rows }) => {
-        if (cols > 0 && rows > 0) {
-          await exec.resize({ h: rows, w: cols });
-        }
-      },
-      stream,
-      write: (data) => {
-        stream.write(data);
-      },
-    };
+    return createSpawnShellSession(inspect.Id, options);
   } catch (error) {
     if (error instanceof ContainerShellError) {
       throw error;

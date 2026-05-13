@@ -22,6 +22,7 @@ type ContainerShellClientMessage =
 
 type ShellWebSocketData = {
   closed?: boolean;
+  ready?: boolean;
   shell?: ContainerShellSession;
 };
 
@@ -71,6 +72,16 @@ function parseShellMessage(message: unknown): ContainerShellClientMessage | null
 
 function getShellData(data: unknown) {
   return data as ShellWebSocketData;
+}
+
+function closeShell(shellData: ShellWebSocketData) {
+  if (shellData.closed) {
+    return;
+  }
+
+  shellData.closed = true;
+  shellData.shell?.close();
+  shellData.shell = undefined;
 }
 
 export const containers = new Elysia({
@@ -179,30 +190,45 @@ export const containers = new Elysia({
   .ws("/:id/shell", {
     async open(ws) {
       try {
-        const session = await createContainerShellSession(ws.data.params.id);
         const shellData = getShellData(ws.data);
 
         shellData.closed = false;
-        shellData.shell = session;
-        session.stream.on("data", (chunk: Buffer | string) => {
-          if (!shellData.closed) {
-            ws.send({ data: chunk.toString(), type: "output" });
-          }
-        });
-        session.stream.on("close", () => {
-          if (!shellData.closed) {
-            ws.send({ type: "closed" });
-          }
-        });
-        session.stream.on("error", (error) => {
-          console.error(error);
-          if (!shellData.closed) {
-            ws.send({ message: CONTAINER_SHELL_ERROR_MESSAGE, type: "error" });
-          }
-        });
-      } catch (error) {
-        console.error(error);
+        shellData.ready = false;
+        const session = await createContainerShellSession(ws.data.params.id, {
+          cols: 80,
+          onClose: () => {
+            if (!shellData.closed) {
+              closeShell(shellData);
+              ws.send({ type: "closed" });
+              ws.close();
+            }
+          },
+          onData: (data) => {
+            if (!shellData.closed) {
+              if (!shellData.ready) {
+                shellData.ready = true;
+                ws.send({ type: "ready" });
+              }
 
+              ws.send({ data, type: "output" });
+            }
+          },
+          onError: (error) => {
+            console.error(error);
+            if (!shellData.closed) {
+              ws.send({ message: CONTAINER_SHELL_ERROR_MESSAGE, type: "error" });
+            }
+          },
+          rows: 24,
+        });
+
+        if (shellData.closed) {
+          session.close();
+          return;
+        }
+
+        shellData.shell = session;
+      } catch (error) {
         if (isNotFoundError(error)) {
           ws.send({ message: CONTAINER_NOT_FOUND_MESSAGE, type: "error" });
         } else if (
@@ -211,6 +237,7 @@ export const containers = new Elysia({
         ) {
           ws.send({ message: CONTAINER_NOT_RUNNING_MESSAGE, type: "error" });
         } else {
+          console.error(error);
           ws.send({ message: CONTAINER_SHELL_ERROR_MESSAGE, type: "error" });
         }
 
@@ -236,17 +263,10 @@ export const containers = new Elysia({
         return;
       }
 
-      session.resize(parsedMessage).catch((error) => {
-        console.error(error);
-        ws.send({ message: "Unable to resize shell.", type: "error" });
-      });
+      session.resize(parsedMessage);
     },
     close(ws) {
-      const shellData = getShellData(ws.data);
-
-      shellData.closed = true;
-      shellData.shell?.close();
-      shellData.shell = undefined;
+      closeShell(getShellData(ws.data));
     },
     detail: {
       description:

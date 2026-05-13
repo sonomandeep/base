@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 type ShellMessage =
   | { data: string; type: "output" }
   | { message: string; type: "error" }
+  | { type: "ready" }
   | { type: "closed" };
 
 interface ContainerShellProps {
@@ -72,31 +73,49 @@ export function ContainerShell({ containerId, disabled }: ContainerShellProps) {
       });
       const fitAddon = new FitAddon();
       const socket = new WebSocket(getContainerShellUrl(containerId));
+      let ready = false;
 
       terminal.loadAddon(fitAddon);
       terminal.open(terminalElement);
       fitAddon.fit();
 
       const dataDisposable = terminal.onData((data) => {
-        if (socket.readyState === WebSocket.OPEN) {
+        if (ready && socket.readyState === WebSocket.OPEN) {
           socket.send(JSON.stringify({ data, type: "input" }));
         }
       });
 
       const resizeObserver = new ResizeObserver(() => {
         fitAddon.fit();
-        sendResize(socket, terminal);
+        if (ready) {
+          sendResize(socket, terminal);
+        }
       });
 
       resizeObserver.observe(terminalElement);
 
       socket.addEventListener("open", () => {
-        terminal.focus();
-        sendResize(socket, terminal);
+        terminal.writeln("Connecting...");
       });
 
       socket.addEventListener("message", (event) => {
-        const message = JSON.parse(event.data) as ShellMessage;
+        let message: ShellMessage;
+
+        try {
+          message = JSON.parse(event.data) as ShellMessage;
+        } catch {
+          terminal.writeln("\r\nReceived an invalid shell message.");
+          return;
+        }
+
+        if (message.type === "ready") {
+          ready = true;
+          terminal.clear();
+          terminal.focus();
+          fitAddon.fit();
+          sendResize(socket, terminal);
+          return;
+        }
 
         if (message.type === "output") {
           terminal.write(message.data);
