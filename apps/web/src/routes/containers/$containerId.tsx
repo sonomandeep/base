@@ -1,8 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Cpu,
   EllipsisVertical,
-  Eraser,
   type LucideIcon,
   MemoryStick,
   RefreshCw,
@@ -10,27 +9,14 @@ import {
   Square,
 } from "lucide-react";
 import prettyBytes from "pretty-bytes";
-import { useState } from "react";
 import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { Button } from "#/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "#/components/ui/dropdown-menu";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemGroup,
-  ItemTitle,
-} from "#/components/ui/item";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { ContainerEnvs } from "#/features/containers/components/container-envs";
-import { ContainerShell } from "#/features/containers/components/container-shell";
+import { ContainerNetworks } from "#/features/containers/components/container-networks";
+import { ContainerPorts } from "#/features/containers/components/container-ports";
+import { ContainerShellTab } from "#/features/containers/components/container-shell-tab";
+import { ContainerVolumes } from "#/features/containers/components/container-volumes";
 import { getContainerFn } from "#/features/containers/functions";
 
 export const Route = createFileRoute("/containers/$containerId")({
@@ -105,43 +91,6 @@ function formatVolumes(count: number) {
   return count === 1 ? "1 volume" : `${count} volumes`;
 }
 
-function formatMountName(mount: { destination: string; name: string | null }) {
-  if (mount.name) {
-    return mount.name;
-  }
-
-  return (
-    mount.destination.split("/").filter(Boolean).at(-1) || mount.destination
-  );
-}
-
-function formatMountMode(rw: boolean) {
-  return rw ? "RW" : "RO";
-}
-
-function formatPortLabel(port: { privatePort: number; type: string }) {
-  return `${port.privatePort}/${port.type}`;
-}
-
-function formatPortBinding(port: {
-  ip: string | null;
-  publicPort: number | null;
-}) {
-  if (port.publicPort === null) {
-    return "--";
-  }
-
-  return port.ip ? `${port.ip}:${port.publicPort}` : String(port.publicPort);
-}
-
-function formatPortBindingLabel(ip: string | null) {
-  if (!ip) {
-    return "IP";
-  }
-
-  return ip.includes(":") ? "IPv6" : "IPv4";
-}
-
 function MetricCard({
   icon: Icon,
   label,
@@ -170,8 +119,6 @@ function MetricCard({
 
 function RouteComponent() {
   const container = Route.useLoaderData();
-  const [shellClearSignal, setShellClearSignal] = useState(0);
-  const [shellSessionKey, setShellSessionKey] = useState(0);
 
   if (!container) {
     return (
@@ -259,125 +206,18 @@ function RouteComponent() {
         </div>
 
         <TabsContent keepMounted value="Shell">
-          <section className="flex flex-col gap-3">
-            <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
-              <h2 className="font-medium">Shell</h2>
-
-              <div className="inline-flex items-center gap-1">
-                <Button
-                  aria-label="Reconnect shell"
-                  disabled={container.status !== "running"}
-                  onClick={() => setShellSessionKey((key) => key + 1)}
-                  size="icon-sm"
-                  variant="ghost"
-                >
-                  <RefreshCw />
-                </Button>
-                <Button
-                  aria-label="Clear shell"
-                  disabled={container.status !== "running"}
-                  onClick={() => setShellClearSignal((signal) => signal + 1)}
-                  size="icon-sm"
-                  variant="ghost"
-                >
-                  <Eraser />
-                </Button>
-              </div>
-            </div>
-
-            <div className="px-4">
-              <ContainerShell
-                clearSignal={shellClearSignal}
-                containerId={container.id}
-                disabled={container.status !== "running"}
-                key={shellSessionKey}
-              />
-            </div>
-          </section>
+          <ContainerShellTab
+            containerId={container.id}
+            disabled={container.status !== "running"}
+          />
         </TabsContent>
 
         <TabsContent value="Networks">
-          <section className="flex flex-col gap-3">
-            <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
-              <h2 className="font-medium">Networks</h2>
-            </div>
-
-            {container.networks.length > 0 ? (
-              <ItemGroup className="gap-1">
-                {container.networks.map((network) => (
-                  <Item
-                    className="w-full flex-nowrap items-center justify-between rounded-lg border-transparent"
-                    key={network.id || network.name}
-                    render={
-                      <Link to="/">
-                        <ItemContent className="flex-none flex-row items-baseline gap-2">
-                          <ItemTitle className="font-normal text-sm">
-                            {network.name}
-                          </ItemTitle>
-                          <p className="text-muted-foreground text-xs">
-                            {network.driver}
-                          </p>
-                        </ItemContent>
-
-                        <div className="inline-flex items-baseline gap-2 font-mono text-sm">
-                          <span className="text-muted-foreground text-xs">
-                            IP
-                          </span>
-                          {network.ipAddress || "--"}
-                        </div>
-                      </Link>
-                    }
-                  />
-                ))}
-              </ItemGroup>
-            ) : (
-              <p className="px-2 text-muted-foreground text-sm">
-                No networks attached
-              </p>
-            )}
-          </section>
+          <ContainerNetworks networks={container.networks} />
         </TabsContent>
 
         <TabsContent value="Ports">
-          <section className="flex flex-col gap-3">
-            <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
-              <h2 className="font-medium">Ports</h2>
-            </div>
-
-            {container.ports.length > 0 ? (
-              <ItemGroup className="gap-1">
-                {container.ports.map((port) => (
-                  <Item
-                    className="w-full flex-nowrap items-center justify-between rounded-lg border-transparent"
-                    key={`${port.privatePort}-${port.publicPort ?? "none"}-${port.type}`}
-                    render={
-                      <div>
-                        <ItemContent className="flex-none flex-row items-baseline gap-2">
-                          <ItemTitle className="font-normal text-sm">
-                            {formatPortLabel(port)}
-                          </ItemTitle>
-                          <p className="text-muted-foreground text-xs">
-                            container
-                          </p>
-                        </ItemContent>
-
-                        <div className="inline-flex items-baseline gap-2 font-mono text-sm">
-                          <span className="text-muted-foreground text-xs">
-                            {formatPortBindingLabel(port.ip)}
-                          </span>
-                          {formatPortBinding(port)}
-                        </div>
-                      </div>
-                    }
-                  />
-                ))}
-              </ItemGroup>
-            ) : (
-              <p className="px-2 text-muted-foreground text-sm">
-                No ports exposed
-              </p>
-            )}
-          </section>
+          <ContainerPorts ports={container.ports} />
         </TabsContent>
 
         <TabsContent value="Envs">
@@ -385,72 +225,7 @@ function RouteComponent() {
         </TabsContent>
 
         <TabsContent value="Volumes">
-          <section className="flex flex-col gap-3">
-            <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
-              <h2 className="font-medium">Volumes</h2>
-            </div>
-
-            {container.mounts.length > 0 ? (
-              <ItemGroup className="gap-1">
-                {container.mounts.map((mount) => (
-                  <Item
-                    className="w-full flex-nowrap items-center justify-between rounded-lg border-transparent"
-                    key={`${mount.type}-${mount.name ?? mount.destination}`}
-                    render={
-                      <div>
-                        <ItemContent className="flex-none flex-row items-baseline gap-2">
-                          <ItemTitle className="font-normal text-sm">
-                            {formatMountName(mount)}
-                          </ItemTitle>
-                          <p className="text-muted-foreground text-xs">
-                            {mount.type}
-                          </p>
-                        </ItemContent>
-
-                        <div className="inline-flex items-center gap-3">
-                          <div className="inline-flex items-baseline gap-2 font-mono text-sm">
-                            <span className="text-muted-foreground text-xs">
-                              {formatMountMode(mount.rw)}
-                            </span>
-                            {formatBytes(mount.size, { binary: true })}
-                          </div>
-
-                          <ItemActions>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger
-                                render={
-                                  <Button size="icon" variant="ghost">
-                                    <EllipsisVertical />
-                                  </Button>
-                                }
-                              />
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuGroup>
-                                  <DropdownMenuLabel>
-                                    Mount paths
-                                  </DropdownMenuLabel>
-                                  <DropdownMenuItem>
-                                    Destination: {mount.destination}
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    Source: {mount.source}
-                                  </DropdownMenuItem>
-                                </DropdownMenuGroup>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </ItemActions>
-                        </div>
-                      </div>
-                    }
-                  />
-                ))}
-              </ItemGroup>
-            ) : (
-              <p className="px-2 text-muted-foreground text-sm">
-                No volumes attached
-              </p>
-            )}
-          </section>
+          <ContainerVolumes mounts={container.mounts} />
         </TabsContent>
       </Tabs>
     </div>
