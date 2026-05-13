@@ -35,7 +35,9 @@ function isNotFoundError(error: unknown) {
   );
 }
 
-function parseShellMessage(message: unknown): ContainerShellClientMessage | null {
+function parseShellMessage(
+  message: unknown
+): ContainerShellClientMessage | null {
   try {
     const parsedMessage =
       typeof message === "string" ? JSON.parse(message) : message;
@@ -216,7 +218,10 @@ export const containers = new Elysia({
           onError: (error) => {
             console.error(error);
             if (!shellData.closed) {
-              ws.send({ message: CONTAINER_SHELL_ERROR_MESSAGE, type: "error" });
+              ws.send({
+                message: CONTAINER_SHELL_ERROR_MESSAGE,
+                type: "error",
+              });
             }
           },
           rows: 24,

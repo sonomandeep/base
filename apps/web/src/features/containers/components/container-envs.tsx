@@ -75,7 +75,7 @@ export function ContainerEnvs({ envs }: ContainerEnvsProps) {
                       {isVisible ? env.value : maskEnvValue(env.value)}
                     </div>
 
-                    <ItemActions className="col-span-1 justify-end gap-1 opacity-0 transition-opacity group-hover/item:opacity-100 focus-within:opacity-100">
+                    <ItemActions className="col-span-1 justify-end gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover/item:opacity-100">
                       <Button
                         aria-label={
                           isVisible

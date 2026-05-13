@@ -34,16 +34,16 @@ interface CreateContainerShellSessionOptions extends ContainerShellSize {
 }
 
 interface BunTerminal {
-  readonly closed: boolean;
   close: () => void;
+  readonly closed: boolean;
   resize: (cols: number, rows: number) => void;
   write: (data: string) => number;
 }
 
 interface BunSubprocess {
   readonly exited: Promise<number>;
-  readonly terminal: BunTerminal | undefined;
   kill: () => void;
+  readonly terminal: BunTerminal | undefined;
 }
 
 type BunSpawn = (

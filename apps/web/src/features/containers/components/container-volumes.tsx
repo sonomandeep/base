@@ -72,7 +72,9 @@ export function ContainerVolumes({ mounts }: ContainerVolumesProps) {
                     <ItemTitle className="font-normal text-sm">
                       {formatMountName(mount)}
                     </ItemTitle>
-                    <p className="text-muted-foreground text-xs">{mount.type}</p>
+                    <p className="text-muted-foreground text-xs">
+                      {mount.type}
+                    </p>
                   </ItemContent>
 
                   <div className="inline-flex items-center gap-3">
@@ -98,7 +100,9 @@ export function ContainerVolumes({ mounts }: ContainerVolumesProps) {
                             <DropdownMenuItem>
                               Destination: {mount.destination}
                             </DropdownMenuItem>
-                            <DropdownMenuItem>Source: {mount.source}</DropdownMenuItem>
+                            <DropdownMenuItem>
+                              Source: {mount.source}
+                            </DropdownMenuItem>
                           </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>
