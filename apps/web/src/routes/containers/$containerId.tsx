@@ -10,6 +10,7 @@ import {
   Square,
 } from "lucide-react";
 import prettyBytes from "pretty-bytes";
+import { useState } from "react";
 import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { Button } from "#/components/ui/button";
 import {
@@ -168,6 +169,8 @@ function MetricCard({
 
 function RouteComponent() {
   const container = Route.useLoaderData();
+  const [shellClearSignal, setShellClearSignal] = useState(0);
+  const [shellSessionKey, setShellSessionKey] = useState(0);
 
   if (!container) {
     return (
@@ -260,10 +263,22 @@ function RouteComponent() {
               <h2 className="font-medium">Shell</h2>
 
               <div className="inline-flex items-center gap-1">
-                <Button aria-label="Reconnect shell" size="icon-sm" variant="ghost">
+                <Button
+                  aria-label="Reconnect shell"
+                  disabled={container.status !== "running"}
+                  onClick={() => setShellSessionKey((key) => key + 1)}
+                  size="icon-sm"
+                  variant="ghost"
+                >
                   <RefreshCw />
                 </Button>
-                <Button aria-label="Clear shell" size="icon-sm" variant="ghost">
+                <Button
+                  aria-label="Clear shell"
+                  disabled={container.status !== "running"}
+                  onClick={() => setShellClearSignal((signal) => signal + 1)}
+                  size="icon-sm"
+                  variant="ghost"
+                >
                   <Eraser />
                 </Button>
               </div>
@@ -271,8 +286,10 @@ function RouteComponent() {
 
             <div className="px-4">
               <ContainerShell
+                clearSignal={shellClearSignal}
                 containerId={container.id}
                 disabled={container.status !== "running"}
+                key={shellSessionKey}
               />
             </div>
           </section>

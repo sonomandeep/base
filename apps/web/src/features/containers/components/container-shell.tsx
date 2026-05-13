@@ -8,6 +8,7 @@ type ShellMessage =
   | { type: "closed" };
 
 interface ContainerShellProps {
+  clearSignal: number;
   containerId: string;
   disabled: boolean;
 }
@@ -41,8 +42,17 @@ function sendResize(socket: WebSocket, terminal: Terminal) {
   );
 }
 
-export function ContainerShell({ containerId, disabled }: ContainerShellProps) {
+export function ContainerShell({
+  clearSignal,
+  containerId,
+  disabled,
+}: ContainerShellProps) {
   const terminalElementRef = useRef<HTMLDivElement>(null);
+  const terminalRef = useRef<Terminal | null>(null);
+
+  useEffect(() => {
+    terminalRef.current?.clear();
+  }, [clearSignal]);
 
   useEffect(() => {
     if (disabled || !terminalElementRef.current) {
@@ -75,6 +85,7 @@ export function ContainerShell({ containerId, disabled }: ContainerShellProps) {
       const socket = new WebSocket(getContainerShellUrl(containerId));
       let ready = false;
 
+      terminalRef.current = terminal;
       terminal.loadAddon(fitAddon);
       terminal.open(terminalElement);
       fitAddon.fit();
@@ -141,6 +152,7 @@ export function ContainerShell({ containerId, disabled }: ContainerShellProps) {
         resizeObserver.disconnect();
         dataDisposable.dispose();
         socket.close();
+        terminalRef.current = null;
         terminal.dispose();
       };
     }
