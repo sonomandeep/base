@@ -87,6 +87,29 @@ function formatVolumes(count: number) {
   return count === 1 ? "1 volume" : `${count} volumes`;
 }
 
+function formatPortLabel(port: { privatePort: number; type: string }) {
+  return `${port.privatePort}/${port.type}`;
+}
+
+function formatPortBinding(port: {
+  ip: string | null;
+  publicPort: number | null;
+}) {
+  if (port.publicPort === null) {
+    return "--";
+  }
+
+  return port.ip ? `${port.ip}:${port.publicPort}` : String(port.publicPort);
+}
+
+function formatPortBindingLabel(ip: string | null) {
+  if (!ip) {
+    return "IP";
+  }
+
+  return ip.includes(":") ? "IPv6" : "IPv4";
+}
+
 function MetricCard({
   icon: Icon,
   label,
@@ -238,6 +261,48 @@ function RouteComponent() {
             ) : (
               <p className="px-2 text-muted-foreground text-sm">
                 No networks attached
+              </p>
+            )}
+          </section>
+        </TabsContent>
+
+        <TabsContent value="Ports">
+          <section className="flex flex-col gap-3">
+            <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
+              <h2 className="font-medium">Ports</h2>
+            </div>
+
+            {container.ports.length > 0 ? (
+              <ItemGroup className="gap-1">
+                {container.ports.map((port) => (
+                  <Item
+                    className="w-full flex-nowrap items-center justify-between rounded-lg border-transparent"
+                    key={`${port.privatePort}-${port.publicPort ?? "none"}-${port.type}`}
+                    render={
+                      <div>
+                        <ItemContent className="flex-none flex-row items-baseline gap-2">
+                          <ItemTitle className="font-normal text-sm">
+                            {formatPortLabel(port)}
+                          </ItemTitle>
+                          <p className="text-muted-foreground text-xs">
+                            container
+                          </p>
+                        </ItemContent>
+
+                        <div className="inline-flex items-baseline gap-2 font-mono text-sm">
+                          <span className="text-muted-foreground text-xs">
+                            {formatPortBindingLabel(port.ip)}
+                          </span>
+                          {formatPortBinding(port)}
+                        </div>
+                      </div>
+                    }
+                  />
+                ))}
+              </ItemGroup>
+            ) : (
+              <p className="px-2 text-muted-foreground text-sm">
+                No ports exposed
               </p>
             )}
           </section>
