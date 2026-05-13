@@ -14,6 +14,7 @@ interface ContainerShellProps {
 }
 
 const apiUrl = import.meta.env.VITE_API_URL;
+const TRAILING_SLASH = /\/$/;
 
 function getContainerShellUrl(containerId: string) {
   if (!apiUrl) {
@@ -23,7 +24,7 @@ function getContainerShellUrl(containerId: string) {
   const url = new URL(apiUrl);
 
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-  url.pathname = `${url.pathname.replace(/\/$/, "")}/containers/${encodeURIComponent(containerId)}/shell`;
+  url.pathname = `${url.pathname.replace(TRAILING_SLASH, "")}/containers/${encodeURIComponent(containerId)}/shell`;
 
   return url.toString();
 }
@@ -49,10 +50,16 @@ export function ContainerShell({
 }: ContainerShellProps) {
   const terminalElementRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<Terminal | null>(null);
+  const previousClearSignalRef = useRef(clearSignal);
 
   useEffect(() => {
+    if (previousClearSignalRef.current === clearSignal) {
+      return;
+    }
+
+    previousClearSignalRef.current = clearSignal;
     terminalRef.current?.clear();
-  }, [clearSignal]);
+  });
 
   useEffect(() => {
     if (disabled || !terminalElementRef.current) {

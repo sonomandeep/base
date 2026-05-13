@@ -65,11 +65,11 @@ const bunRuntime = globalThis as typeof globalThis & {
 };
 
 export class ContainerShellError extends Error {
-  constructor(
-    readonly code: "NOT_RUNNING" | "START_FAILED",
-    message: string
-  ) {
+  readonly code: "NOT_RUNNING" | "START_FAILED";
+
+  constructor(code: "NOT_RUNNING" | "START_FAILED", message: string) {
     super(message);
+    this.code = code;
     this.name = "ContainerShellError";
   }
 }

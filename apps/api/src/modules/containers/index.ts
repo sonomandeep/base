@@ -20,11 +20,11 @@ type ContainerShellClientMessage =
   | { data: string; type: "input" }
   | { cols: number; rows: number; type: "resize" };
 
-type ShellWebSocketData = {
+interface ShellWebSocketData {
   closed?: boolean;
   ready?: boolean;
   shell?: ContainerShellSession;
-};
+}
 
 function isNotFoundError(error: unknown) {
   return (
