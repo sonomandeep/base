@@ -27,6 +27,7 @@ import {
   ItemTitle,
 } from "#/components/ui/item";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
+import { ContainerShell } from "#/features/containers/components/container-shell";
 import { getContainerFn } from "#/features/containers/functions";
 
 export const Route = createFileRoute("/containers/$containerId")({
@@ -241,7 +242,7 @@ function RouteComponent() {
         ))}
       </section>
 
-      <Tabs className="flex flex-col gap-y-6" defaultValue="Networks">
+      <Tabs className="flex flex-col gap-y-6" defaultValue="Shell">
         <div className="px-4">
           <TabsList className="w-full">
             {tabs.map((tab) => (
@@ -251,6 +252,13 @@ function RouteComponent() {
             ))}
           </TabsList>
         </div>
+
+        <TabsContent keepMounted value="Shell">
+          <ContainerShell
+            containerId={container.id}
+            disabled={container.status !== "running"}
+          />
+        </TabsContent>
 
         <TabsContent value="Networks">
           <section className="flex flex-col gap-3">
