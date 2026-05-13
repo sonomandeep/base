@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Cpu,
   EllipsisVertical,
+  Eraser,
   type LucideIcon,
   MemoryStick,
   RefreshCw,
@@ -257,6 +258,15 @@ function RouteComponent() {
           <section className="flex flex-col gap-3">
             <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
               <h2 className="font-medium">Shell</h2>
+
+              <div className="inline-flex items-center gap-1">
+                <Button aria-label="Reconnect shell" size="icon-sm" variant="ghost">
+                  <RefreshCw />
+                </Button>
+                <Button aria-label="Clear shell" size="icon-sm" variant="ghost">
+                  <Eraser />
+                </Button>
+              </div>
             </div>
 
             <div className="px-4">
