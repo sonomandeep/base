@@ -14,6 +14,13 @@ type ContainerDetailResult =
   | { data: ContainerModel["detail"]; error: null }
   | { data: null; error: unknown };
 
+interface DockerVolumeUsage {
+  Name?: string;
+  UsageData?: {
+    Size?: number;
+  } | null;
+}
+
 function getContainerName(id: string, names: string[]) {
   return names[0]?.replace(CONTAINER_NAME_PREFIX, "") || id.slice(0, 12);
 }
@@ -199,11 +206,33 @@ function getContainerNetworks(
   );
 }
 
-function getContainerMounts(inspect: Dockerode.ContainerInspectInfo) {
+async function getVolumeSizeMap() {
+  try {
+    const usage = await client.df();
+    const sizes = new Map<string, number>();
+    const volumes: DockerVolumeUsage[] = usage.Volumes ?? [];
+
+    for (const volume of volumes) {
+      if (volume.Name && volume.UsageData?.Size !== undefined) {
+        sizes.set(volume.Name, volume.UsageData.Size);
+      }
+    }
+
+    return sizes;
+  } catch {
+    return new Map<string, number>();
+  }
+}
+
+function getContainerMounts(
+  inspect: Dockerode.ContainerInspectInfo,
+  volumeSizes: Map<string, number>
+) {
   return (inspect.Mounts ?? []).map((mount) => ({
     destination: mount.Destination ?? "",
     name: mount.Name ?? null,
     rw: mount.RW ?? false,
+    size: mount.Name ? (volumeSizes.get(mount.Name) ?? null) : null,
     source: mount.Source ?? "",
     type: mount.Type ?? "",
   }));
@@ -278,9 +307,10 @@ export async function getContainer(id: string): Promise<ContainerDetailResult> {
       status,
       health ? `${status} (${health})` : status
     );
-    const [networkDrivers, stats] = await Promise.all([
+    const [networkDrivers, stats, volumeSizes] = await Promise.all([
       getNetworkDriverMap(),
       getContainerStats(inspect.Id, state),
+      getVolumeSizeMap(),
     ]);
 
     return {
@@ -298,7 +328,7 @@ export async function getContainer(id: string): Promise<ContainerDetailResult> {
           limit: stats.memoryLimit,
           usage: stats.ram,
         },
-        mounts: getContainerMounts(inspect),
+        mounts: getContainerMounts(inspect, volumeSizes),
         name:
           inspect.Name?.replace(CONTAINER_NAME_PREFIX, "") ||
           inspect.Id.slice(0, 12),

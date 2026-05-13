@@ -98,6 +98,12 @@ export const ContainerModel = {
         destination: t.String({ description: "Mount destination path." }),
         name: t.Nullable(t.String({ description: "Docker volume name." })),
         rw: t.Boolean({ description: "Whether the mount is writable." }),
+        size: t.Nullable(
+          t.Number({
+            description: "Volume size in bytes, when available.",
+            minimum: 0,
+          })
+        ),
         source: t.String({ description: "Mount source path." }),
         type: t.String({ description: "Mount type." }),
       })
