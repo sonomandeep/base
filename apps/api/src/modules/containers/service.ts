@@ -291,6 +291,21 @@ function getContainerPorts(inspect: Dockerode.ContainerInspectInfo) {
   );
 }
 
+function getContainerEnvs(inspect: Dockerode.ContainerInspectInfo) {
+  return (inspect.Config.Env ?? []).map((env) => {
+    const separatorIndex = env.indexOf("=");
+
+    if (separatorIndex === -1) {
+      return { key: env, value: "" };
+    }
+
+    return {
+      key: env.slice(0, separatorIndex),
+      value: env.slice(separatorIndex + 1),
+    };
+  });
+}
+
 async function getNetworkDriverMap() {
   try {
     const networks = await client.listNetworks();
@@ -445,6 +460,7 @@ export async function getContainer(id: string): Promise<ContainerDetailResult> {
         },
         createdAt: inspect.Created ?? null,
         disk: getContainerDisk(inspect),
+        envs: getContainerEnvs(inspect),
         finishedAt: inspect.State.FinishedAt ?? null,
         id: inspect.Id,
         image: inspect.Config.Image ?? inspect.Image,

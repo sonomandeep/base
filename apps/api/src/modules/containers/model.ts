@@ -73,6 +73,12 @@ export const ContainerModel = {
         })
       ),
     }),
+    envs: t.Array(
+      t.Object({
+        key: t.String({ description: "Environment variable name." }),
+        value: t.String({ description: "Environment variable value." }),
+      })
+    ),
     finishedAt: t.Nullable(
       t.String({ description: "Container last finished timestamp." })
     ),
