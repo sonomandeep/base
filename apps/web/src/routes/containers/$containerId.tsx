@@ -187,7 +187,7 @@ function RouteComponent() {
 
       <section className="grid gap-4 px-4 md:grid-cols-6">
         {info.map((item) => (
-          <div className="col-span-2 grid gap-1" key={item.label}>
+          <div className="col-span-2 grid gap-1 px-4" key={item.label}>
             <p className="text-muted-foreground text-xs">{item.label}</p>
             <p className="text-sm">{item.value}</p>
           </div>
