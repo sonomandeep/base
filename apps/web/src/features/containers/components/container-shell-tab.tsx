@@ -18,7 +18,7 @@ export function ContainerShellTab({
   return (
     <section className="flex flex-col gap-3">
       <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
-        <h2 className="font-medium">Shell</h2>
+        <h2 className="font-medium text-sm">Shell</h2>
 
         <div className="inline-flex items-center gap-1">
           <Button

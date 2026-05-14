@@ -50,7 +50,7 @@ export function ContainerEnvs({ envs }: ContainerEnvsProps) {
   return (
     <section className="flex flex-col gap-3">
       <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
-        <h2 className="font-medium">Envs</h2>
+        <h2 className="font-medium text-sm">Envs</h2>
       </div>
 
       {envs.length > 0 ? (

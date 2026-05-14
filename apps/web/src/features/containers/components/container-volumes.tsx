@@ -57,7 +57,7 @@ export function ContainerVolumes({ mounts }: ContainerVolumesProps) {
   return (
     <section className="flex flex-col gap-3">
       <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
-        <h2 className="font-medium">Volumes</h2>
+        <h2 className="font-medium text-sm">Volumes</h2>
       </div>
 
       {mounts.length > 0 ? (

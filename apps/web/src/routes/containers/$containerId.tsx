@@ -151,13 +151,13 @@ function RouteComponent() {
           <h1 className="font-medium">{container.name}</h1>
 
           <div className="inline-flex items-center gap-2">
-            <Button size="icon" variant="ghost">
+            <Button size="icon-sm" variant="ghost">
               <Square />
             </Button>
-            <Button size="icon" variant="ghost">
+            <Button size="icon-sm" variant="ghost">
               <RefreshCw />
             </Button>
-            <Button size="icon" variant="ghost">
+            <Button size="icon-sm" variant="ghost">
               <EllipsisVertical />
             </Button>
           </div>

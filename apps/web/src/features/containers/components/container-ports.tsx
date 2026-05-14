@@ -38,7 +38,7 @@ export function ContainerPorts({ ports }: ContainerPortsProps) {
   return (
     <section className="flex flex-col gap-3">
       <div className="inline-flex w-full items-center justify-between pr-2 pl-4">
-        <h2 className="font-medium">Ports</h2>
+        <h2 className="font-medium text-sm">Ports</h2>
       </div>
 
       {ports.length > 0 ? (
