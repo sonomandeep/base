@@ -24,7 +24,7 @@ export const Route = createFileRoute("/containers/$containerId")({
   loader: ({ params }) => getContainerFn({ data: { id: params.containerId } }),
 });
 
-const tabs = ["Logs", "Shell", "Networks", "Envs", "Volumes", "Ports"];
+const tabs = ["Shell", "Networks", "Envs", "Volumes", "Ports"];
 
 function formatPercent(value: number | null) {
   return value === null ? "--" : `${value.toFixed(0)}%`;
