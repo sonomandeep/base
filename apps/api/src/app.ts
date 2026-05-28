@@ -1,5 +1,6 @@
 import openapi from "@elysia/openapi";
 import { Elysia } from "elysia";
+import { betterAuthPlugin } from "./lib/auth";
 import { containers } from "./modules/containers";
 import { hosts } from "./modules/hosts";
 import { images } from "./modules/images";
@@ -40,6 +41,7 @@ export const api = new Elysia()
       },
     })
   )
+  .use(betterAuthPlugin)
   .use(containers)
   .use(hosts)
   .use(images)
