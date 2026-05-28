@@ -1,7 +1,6 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { BottomNavigation } from "#/components/layout/bottom-navigation";
 
 import appCss from "../styles.css?url";
 
@@ -85,7 +84,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-        <BottomNavigation />
         <TanStackDevtools
           config={{
             position: "bottom-right",

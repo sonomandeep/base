@@ -19,7 +19,7 @@ import { ContainerShellTab } from "#/features/containers/components/container-sh
 import { ContainerVolumes } from "#/features/containers/components/container-volumes";
 import { getContainerFn } from "#/features/containers/functions";
 
-export const Route = createFileRoute("/containers/$containerId")({
+export const Route = createFileRoute("/_dashboard/containers/$containerId")({
   component: RouteComponent,
   loader: ({ params }) => getContainerFn({ data: { id: params.containerId } }),
 });

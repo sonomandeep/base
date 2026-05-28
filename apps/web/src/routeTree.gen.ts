@@ -9,82 +9,110 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as SettingsIndexRouteImport } from './routes/settings/index'
-import { Route as LogsIndexRouteImport } from './routes/logs/index'
-import { Route as ImagesIndexRouteImport } from './routes/images/index'
-import { Route as ContainersIndexRouteImport } from './routes/containers/index'
-import { Route as ImagesImageIdRouteImport } from './routes/images/$imageId'
-import { Route as ContainersContainerIdRouteImport } from './routes/containers/$containerId'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as DashboardRouteImport } from './routes/_dashboard'
+import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
+import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
+import { Route as DashboardSettingsIndexRouteImport } from './routes/_dashboard/settings/index'
+import { Route as DashboardLogsIndexRouteImport } from './routes/_dashboard/logs/index'
+import { Route as DashboardImagesIndexRouteImport } from './routes/_dashboard/images/index'
+import { Route as DashboardContainersIndexRouteImport } from './routes/_dashboard/containers/index'
+import { Route as DashboardImagesImageIdRouteImport } from './routes/_dashboard/images/$imageId'
+import { Route as DashboardContainersContainerIdRouteImport } from './routes/_dashboard/containers/$containerId'
 
-const IndexRoute = IndexRouteImport.update({
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/_dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => DashboardRoute,
 } as any)
-const SettingsIndexRoute = SettingsIndexRouteImport.update({
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => AuthRoute,
+} as any)
+const DashboardSettingsIndexRoute = DashboardSettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => DashboardRoute,
 } as any)
-const LogsIndexRoute = LogsIndexRouteImport.update({
+const DashboardLogsIndexRoute = DashboardLogsIndexRouteImport.update({
   id: '/logs/',
   path: '/logs/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => DashboardRoute,
 } as any)
-const ImagesIndexRoute = ImagesIndexRouteImport.update({
+const DashboardImagesIndexRoute = DashboardImagesIndexRouteImport.update({
   id: '/images/',
   path: '/images/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => DashboardRoute,
 } as any)
-const ContainersIndexRoute = ContainersIndexRouteImport.update({
-  id: '/containers/',
-  path: '/containers/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ImagesImageIdRoute = ImagesImageIdRouteImport.update({
+const DashboardContainersIndexRoute =
+  DashboardContainersIndexRouteImport.update({
+    id: '/containers/',
+    path: '/containers/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardImagesImageIdRoute = DashboardImagesImageIdRouteImport.update({
   id: '/images/$imageId',
   path: '/images/$imageId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => DashboardRoute,
 } as any)
-const ContainersContainerIdRoute = ContainersContainerIdRouteImport.update({
-  id: '/containers/$containerId',
-  path: '/containers/$containerId',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const DashboardContainersContainerIdRoute =
+  DashboardContainersContainerIdRouteImport.update({
+    id: '/containers/$containerId',
+    path: '/containers/$containerId',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/containers/$containerId': typeof ContainersContainerIdRoute
-  '/images/$imageId': typeof ImagesImageIdRoute
-  '/containers/': typeof ContainersIndexRoute
-  '/images/': typeof ImagesIndexRoute
-  '/logs/': typeof LogsIndexRoute
-  '/settings/': typeof SettingsIndexRoute
+  '/': typeof DashboardIndexRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/auth/sign-up': typeof AuthSignUpRoute
+  '/containers/$containerId': typeof DashboardContainersContainerIdRoute
+  '/images/$imageId': typeof DashboardImagesImageIdRoute
+  '/containers/': typeof DashboardContainersIndexRoute
+  '/images/': typeof DashboardImagesIndexRoute
+  '/logs/': typeof DashboardLogsIndexRoute
+  '/settings/': typeof DashboardSettingsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/containers/$containerId': typeof ContainersContainerIdRoute
-  '/images/$imageId': typeof ImagesImageIdRoute
-  '/containers': typeof ContainersIndexRoute
-  '/images': typeof ImagesIndexRoute
-  '/logs': typeof LogsIndexRoute
-  '/settings': typeof SettingsIndexRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/auth/sign-up': typeof AuthSignUpRoute
+  '/': typeof DashboardIndexRoute
+  '/containers/$containerId': typeof DashboardContainersContainerIdRoute
+  '/images/$imageId': typeof DashboardImagesImageIdRoute
+  '/containers': typeof DashboardContainersIndexRoute
+  '/images': typeof DashboardImagesIndexRoute
+  '/logs': typeof DashboardLogsIndexRoute
+  '/settings': typeof DashboardSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/containers/$containerId': typeof ContainersContainerIdRoute
-  '/images/$imageId': typeof ImagesImageIdRoute
-  '/containers/': typeof ContainersIndexRoute
-  '/images/': typeof ImagesIndexRoute
-  '/logs/': typeof LogsIndexRoute
-  '/settings/': typeof SettingsIndexRoute
+  '/_dashboard': typeof DashboardRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
+  '/auth/sign-up': typeof AuthSignUpRoute
+  '/_dashboard/': typeof DashboardIndexRoute
+  '/_dashboard/containers/$containerId': typeof DashboardContainersContainerIdRoute
+  '/_dashboard/images/$imageId': typeof DashboardImagesImageIdRoute
+  '/_dashboard/containers/': typeof DashboardContainersIndexRoute
+  '/_dashboard/images/': typeof DashboardImagesIndexRoute
+  '/_dashboard/logs/': typeof DashboardLogsIndexRoute
+  '/_dashboard/settings/': typeof DashboardSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
+    | '/auth/sign-up'
     | '/containers/$containerId'
     | '/images/$imageId'
     | '/containers/'
@@ -93,6 +121,8 @@ export interface FileRouteTypes {
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/auth'
+    | '/auth/sign-up'
     | '/'
     | '/containers/$containerId'
     | '/images/$imageId'
@@ -102,87 +132,135 @@ export interface FileRouteTypes {
     | '/settings'
   id:
     | '__root__'
-    | '/'
-    | '/containers/$containerId'
-    | '/images/$imageId'
-    | '/containers/'
-    | '/images/'
-    | '/logs/'
-    | '/settings/'
+    | '/_dashboard'
+    | '/auth'
+    | '/auth/sign-up'
+    | '/_dashboard/'
+    | '/_dashboard/containers/$containerId'
+    | '/_dashboard/images/$imageId'
+    | '/_dashboard/containers/'
+    | '/_dashboard/images/'
+    | '/_dashboard/logs/'
+    | '/_dashboard/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ContainersContainerIdRoute: typeof ContainersContainerIdRoute
-  ImagesImageIdRoute: typeof ImagesImageIdRoute
-  ContainersIndexRoute: typeof ContainersIndexRoute
-  ImagesIndexRoute: typeof ImagesIndexRoute
-  LogsIndexRoute: typeof LogsIndexRoute
-  SettingsIndexRoute: typeof SettingsIndexRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_dashboard': {
+      id: '/_dashboard'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_dashboard/': {
+      id: '/_dashboard/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/settings/': {
-      id: '/settings/'
+    '/auth/sign-up': {
+      id: '/auth/sign-up'
+      path: '/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_dashboard/settings/': {
+      id: '/_dashboard/settings/'
       path: '/settings'
       fullPath: '/settings/'
-      preLoaderRoute: typeof SettingsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardSettingsIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/logs/': {
-      id: '/logs/'
+    '/_dashboard/logs/': {
+      id: '/_dashboard/logs/'
       path: '/logs'
       fullPath: '/logs/'
-      preLoaderRoute: typeof LogsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardLogsIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/images/': {
-      id: '/images/'
+    '/_dashboard/images/': {
+      id: '/_dashboard/images/'
       path: '/images'
       fullPath: '/images/'
-      preLoaderRoute: typeof ImagesIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardImagesIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/containers/': {
-      id: '/containers/'
+    '/_dashboard/containers/': {
+      id: '/_dashboard/containers/'
       path: '/containers'
       fullPath: '/containers/'
-      preLoaderRoute: typeof ContainersIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardContainersIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/images/$imageId': {
-      id: '/images/$imageId'
+    '/_dashboard/images/$imageId': {
+      id: '/_dashboard/images/$imageId'
       path: '/images/$imageId'
       fullPath: '/images/$imageId'
-      preLoaderRoute: typeof ImagesImageIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardImagesImageIdRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/containers/$containerId': {
-      id: '/containers/$containerId'
+    '/_dashboard/containers/$containerId': {
+      id: '/_dashboard/containers/$containerId'
       path: '/containers/$containerId'
       fullPath: '/containers/$containerId'
-      preLoaderRoute: typeof ContainersContainerIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardContainersContainerIdRouteImport
+      parentRoute: typeof DashboardRoute
     }
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardContainersContainerIdRoute: typeof DashboardContainersContainerIdRoute
+  DashboardImagesImageIdRoute: typeof DashboardImagesImageIdRoute
+  DashboardContainersIndexRoute: typeof DashboardContainersIndexRoute
+  DashboardImagesIndexRoute: typeof DashboardImagesIndexRoute
+  DashboardLogsIndexRoute: typeof DashboardLogsIndexRoute
+  DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardIndexRoute: DashboardIndexRoute,
+  DashboardContainersContainerIdRoute: DashboardContainersContainerIdRoute,
+  DashboardImagesImageIdRoute: DashboardImagesImageIdRoute,
+  DashboardContainersIndexRoute: DashboardContainersIndexRoute,
+  DashboardImagesIndexRoute: DashboardImagesIndexRoute,
+  DashboardLogsIndexRoute: DashboardLogsIndexRoute,
+  DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
+interface AuthRouteChildren {
+  AuthSignUpRoute: typeof AuthSignUpRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthSignUpRoute: AuthSignUpRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  ContainersContainerIdRoute: ContainersContainerIdRoute,
-  ImagesImageIdRoute: ImagesImageIdRoute,
-  ContainersIndexRoute: ContainersIndexRoute,
-  ImagesIndexRoute: ImagesIndexRoute,
-  LogsIndexRoute: LogsIndexRoute,
-  SettingsIndexRoute: SettingsIndexRoute,
+  DashboardRoute: DashboardRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

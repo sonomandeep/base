@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { DashboardHeader } from "#/components/layout/dashboard-header";
 
-export const Route = createFileRoute("/images/")({
+export const Route = createFileRoute("/_dashboard/images/")({
   component: RouteComponent,
 });
 

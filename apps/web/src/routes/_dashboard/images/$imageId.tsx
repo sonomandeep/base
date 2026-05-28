@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/images/$imageId")({
+export const Route = createFileRoute("/_dashboard/images/$imageId")({
   component: RouteComponent,
 });
 

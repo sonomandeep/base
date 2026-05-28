@@ -16,7 +16,7 @@ import { getImagesFn } from "#/features/images/functions";
 import { getNetworkStateSummaryFn } from "#/features/networks/functions";
 import { getVolumeStateSummaryFn } from "#/features/volumes/functions";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_dashboard/")({
   head: () => ({
     meta: [{ title: "Base | Dashboard" }],
   }),

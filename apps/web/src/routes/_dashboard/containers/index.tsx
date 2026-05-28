@@ -10,7 +10,7 @@ import { getContainersFn } from "#/features/containers/functions";
 import { HostState } from "#/features/hosts/components/host-state";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/containers/")({
+export const Route = createFileRoute("/_dashboard/containers/")({
   component: RouteComponent,
   loader: async () => {
     const containers = await getContainersFn();
