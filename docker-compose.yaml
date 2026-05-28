@@ -1,0 +1,17 @@
+services:
+  database:
+    image: postgres:18.1-alpine3.23
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: base_dev
+      POSTGRES_USER: dev_user
+      POSTGRES_PASSWORD: dev_password
+    volumes:
+      - database:/var/lib/postgresql/data
+    cpus: "1.0"
+    mem_limit: "512m"
+
+volumes:
+  database:
