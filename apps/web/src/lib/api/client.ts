@@ -6,4 +6,4 @@ if (!apiUrl) {
   throw new Error("VITE_API_URL is required");
 }
 
-export const api = createApiClient(apiUrl);
+export const api = createApiClient(`${apiUrl}/api`);

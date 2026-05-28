@@ -21,7 +21,7 @@ function getContainerShellUrl(containerId: string) {
     throw new Error("VITE_API_URL is required");
   }
 
-  const url = new URL(apiUrl);
+  const url = new URL(`${apiUrl}/api`);
 
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
   url.pathname = `${url.pathname.replace(TRAILING_SLASH, "")}/containers/${encodeURIComponent(containerId)}/shell`;
