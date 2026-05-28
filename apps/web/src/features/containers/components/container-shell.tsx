@@ -1,5 +1,6 @@
 import type { Terminal } from "@xterm/xterm";
 import { useEffect, useRef } from "react";
+import { env } from "#/lib/env";
 
 type ShellMessage =
   | { data: string; type: "output" }
@@ -13,15 +14,10 @@ interface ContainerShellProps {
   disabled: boolean;
 }
 
-const apiUrl = import.meta.env.VITE_API_URL;
 const TRAILING_SLASH = /\/$/;
 
 function getContainerShellUrl(containerId: string) {
-  if (!apiUrl) {
-    throw new Error("VITE_API_URL is required");
-  }
-
-  const url = new URL(`${apiUrl}/api`);
+  const url = new URL(`${env.VITE_API_URL}/api`);
 
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
   url.pathname = `${url.pathname.replace(TRAILING_SLASH, "")}/containers/${encodeURIComponent(containerId)}/shell`;
