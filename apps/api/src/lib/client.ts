@@ -1,5 +1,4 @@
 import Docker from "dockerode";
+import { env } from "./env";
 
-const socketPath = process.env.DOCKER_SOCKET_PATH ?? "/var/run/docker.sock";
-
-export const client = new Docker({ socketPath });
+export const client = new Docker({ socketPath: env.DOCKER_SOCKET_PATH });

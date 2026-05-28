@@ -1,6 +1,7 @@
 import { cors } from "@elysia/cors";
 import { Elysia } from "elysia";
 import { api } from "./app";
+import { env } from "./lib/env";
 
 const app = new Elysia({ prefix: "/api" })
   .use(
@@ -8,7 +9,7 @@ const app = new Elysia({ prefix: "/api" })
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      origin: process.env.WEB_ORIGIN ?? true,
+      origin: env.WEB_ORIGIN,
     })
   )
   .use(api)
