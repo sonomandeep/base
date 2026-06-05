@@ -24,8 +24,8 @@ export const Route = createFileRoute("/auth/sign-up")({
 });
 
 const signUpSchema = z.object({
-  email: z.string().email("Enter a valid email address."),
-  name: z.string().min(1, "Firstname is required."),
+  email: z.email("Enter a valid email address."),
+  name: z.string().min(1, "Name is required."),
   password: z
     .string()
     .min(8, "Use at least 8 characters.")
@@ -114,7 +114,7 @@ function SignUp() {
 
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Firstname</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Name</FieldLabel>
                     <Input
                       aria-invalid={isInvalid}
                       autoComplete="name"
