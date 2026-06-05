@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+// import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { Elysia } from "elysia";
 import { db } from "./db";
 import { account, session, user, verification } from "./db/schema";
@@ -17,6 +18,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  // plugins: [tanstackStartCookies()],
 });
 
 export const betterAuthPlugin = new Elysia({ name: "better-auth" })
