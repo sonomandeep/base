@@ -15,7 +15,6 @@ export const getSessionFn = createServerFn({ method: "GET" }).handler(
       console.error("error fetching session", session.error);
       return null;
     }
-    console.log(session.data);
 
     return session.data;
   }
@@ -35,7 +34,7 @@ export const ensureSessionFn = createServerFn({ method: "GET" }).handler(
       throw new Error("Error fetching session");
     }
 
-    if (!session) {
+    if (!session.data) {
       throw new Error("Unauthorized");
     }
 
