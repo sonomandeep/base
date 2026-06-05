@@ -1,14 +1,22 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeaders } from "@tanstack/react-start/server";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { api } from "#/lib/api/client";
+import { ensureSessionFn } from "../auth/functions";
 
 const getContainerInputSchema = z.object({
   id: z.string().min(1),
 });
 
 export const getContainersFn = createServerFn().handler(async () => {
-  const { data, error } = await api.containers.get();
+  await ensureSessionFn();
+  const headers = getRequestHeaders();
+  const { data, error } = await api.containers.get({
+    fetch: {
+      headers,
+    },
+  });
   if (error) {
     console.error(error.value);
 
