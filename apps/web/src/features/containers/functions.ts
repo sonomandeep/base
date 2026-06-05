@@ -29,7 +29,13 @@ export const getContainersFn = createServerFn().handler(async () => {
 export const getContainerFn = createServerFn({ method: "GET" })
   .inputValidator(zodValidator(getContainerInputSchema))
   .handler(async ({ data: input }) => {
-    const { data, error } = await api.containers({ id: input.id }).get();
+    await ensureSessionFn();
+    const headers = getRequestHeaders();
+    const { data, error } = await api.containers({ id: input.id }).get({
+      fetch: {
+        headers,
+      },
+    });
 
     if (error) {
       console.error(error.value);
