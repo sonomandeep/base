@@ -231,11 +231,12 @@ function SignUp() {
           Already have an account?
         </p>
 
-        <Button
-          nativeButton={false}
-          render={<Link to="/auth/sign-in">Sign in</Link>}
-          variant="link"
-        />
+        <Link
+          className="px-1.5 text-xs underline-offset-4 hover:underline"
+          to="/auth/sign-in"
+        >
+          Sign in
+        </Link>
       </div>
     </main>
   );
