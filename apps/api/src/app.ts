@@ -42,11 +42,9 @@ export const api = new Elysia()
     })
   )
   .use(betterAuthPlugin)
-  .use(containers)
-  .use(hosts)
-  .use(images)
-  .use(networks)
-  .use(volumes)
+  .guard({ auth: true }, (app) =>
+    app.use(containers).use(hosts).use(images).use(networks).use(volumes)
+  )
   .get("/", () => "Hello Elysia");
 
 export type Api = typeof api;
