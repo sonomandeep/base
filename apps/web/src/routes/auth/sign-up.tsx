@@ -14,7 +14,7 @@ import {
 import { Input } from "#/components/ui/input";
 import { Spinner } from "#/components/ui/spinner";
 import { authClient } from "#/lib/auth-client";
-import { getFormErrorMessage, normalizeFieldErrors } from "#/lib/form-errors";
+import { normalizeFieldErrors } from "#/lib/utils";
 
 export const Route = createFileRoute("/auth/sign-up")({
   head: () => ({
@@ -31,16 +31,6 @@ const signUpSchema = z.object({
     .min(8, "Use at least 8 characters.")
     .max(128, "Use at most 128 characters."),
 });
-
-function isEmailAlreadyInUseError(error: {
-  code?: string;
-  message?: string;
-  status?: number;
-}) {
-  const text = `${error.code ?? ""} ${error.message ?? ""}`.toLowerCase();
-
-  return error.status === 422 && text.includes("exist");
-}
 
 function SignUp() {
   const navigate = Route.useNavigate();
@@ -60,7 +50,7 @@ function SignUp() {
           return null;
         }
 
-        if (isEmailAlreadyInUseError(error)) {
+        if (error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
           return {
             fields: {
               email: "This email is already in use.",
@@ -110,7 +100,7 @@ function SignUp() {
             <form.Field name="name">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  field.state.meta.isBlurred && !field.state.meta.isValid;
 
                 return (
                   <Field data-invalid={isInvalid}>
@@ -140,7 +130,7 @@ function SignUp() {
             <form.Field name="email">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  field.state.meta.isBlurred && !field.state.meta.isValid;
 
                 return (
                   <Field data-invalid={isInvalid}>
@@ -171,7 +161,7 @@ function SignUp() {
             <form.Field name="password">
               {(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  field.state.meta.isBlurred && !field.state.meta.isValid;
 
                 return (
                   <Field data-invalid={isInvalid}>
@@ -204,11 +194,11 @@ function SignUp() {
           </FieldGroup>
         </FieldSet>
 
-        <form.Subscribe selector={(state) => state.errorMap.onSubmit}>
-          {(error) => {
-            const message = getFormErrorMessage(error);
+        <form.Subscribe selector={(state) => state.errorMap}>
+          {(errorMap) => {
+            const message = errorMap.onSubmit?.form;
 
-            return message ? <FieldError>{message}</FieldError> : null;
+            return message ? <FieldError>{String(message)}</FieldError> : null;
           }}
         </form.Subscribe>
 
