@@ -20,10 +20,12 @@ export const Route = createFileRoute("/_dashboard")({
 });
 
 function DashboardLayout() {
+  const { user } = Route.useRouteContext();
+
   return (
     <>
       <div className="mx-auto my-12 flex max-w-136 flex-col gap-8 pb-24">
-        <DashboardHeader />
+        <DashboardHeader user={user} />
         <Outlet />
       </div>
       <BottomNavigation />
