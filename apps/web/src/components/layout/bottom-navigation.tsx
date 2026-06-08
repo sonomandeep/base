@@ -33,7 +33,7 @@ export function BottomNavigation() {
   return (
     <nav
       aria-label="Primary navigation"
-      className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-black p-2 shadow-2xl shadow-black/20"
+      className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-black p-2 dark:bg-muted"
     >
       <ul className="flex items-center gap-3">
         {items.map((item) => {
@@ -45,9 +45,9 @@ export function BottomNavigation() {
               <Link
                 aria-label={item.label}
                 className={cn(
-                  "flex items-center justify-center rounded-full p-1.5 text-white/70 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50",
+                  "flex items-center justify-center rounded-full p-1.5 text-white/70 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 dark:text-foreground/70 dark:focus-visible:ring-ring/50 dark:hover:bg-foreground/10 dark:hover:text-foreground",
                   active &&
-                    "bg-white text-black hover:bg-white hover:text-black"
+                    "bg-white text-black hover:bg-white hover:text-black dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary dark:hover:text-primary-foreground"
                 )}
                 to={item.to}
               >
