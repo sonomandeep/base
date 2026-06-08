@@ -76,7 +76,7 @@ function Home() {
 
       <section className="grid w-full grid-cols-6 gap-4 px-4">
         <div className="col-span-3 flex flex-col gap-6 rounded-xl bg-muted p-4">
-          <div className="inline-flex w-full items-center justify-between text-neutral-700">
+          <div className="inline-flex w-full items-center justify-between text-foreground/70">
             <h3 className="font-medium text-sm">Networks</h3>
             <Network className="size-3.5" />
           </div>
@@ -94,7 +94,7 @@ function Home() {
         </div>
 
         <div className="col-span-3 flex flex-col gap-6 rounded-xl bg-muted p-4">
-          <div className="inline-flex w-full items-center justify-between text-neutral-700">
+          <div className="inline-flex w-full items-center justify-between text-foreground/70">
             <h3 className="font-medium text-sm">Volumes</h3>
             <HardDrive className="size-3.5" />
           </div>

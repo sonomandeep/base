@@ -89,7 +89,7 @@ function SignUp() {
 
           <div className="flex flex-col items-center gap-1">
             <h1 className="font-medium text-lg">Create an account</h1>
-            <p className="text-balance text-center text-neutral-700 text-sm">
+            <p className="text-balance text-center text-foreground/70 text-sm">
               Start managing your local infrastructure with Base.
             </p>
           </div>

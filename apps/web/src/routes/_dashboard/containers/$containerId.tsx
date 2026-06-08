@@ -117,7 +117,7 @@ function MetricCard({
 }) {
   return (
     <div className="col-span-2 flex flex-col gap-6 rounded-xl bg-muted p-4">
-      <div className="inline-flex w-full items-center justify-between text-neutral-700">
+      <div className="inline-flex w-full items-center justify-between text-foreground/70">
         <h3 className="font-medium text-sm">{label}</h3>
         <Icon className="size-3.5" />
       </div>

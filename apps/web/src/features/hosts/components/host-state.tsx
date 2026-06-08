@@ -85,7 +85,7 @@ export function HostState() {
     <section className="grid w-full grid-cols-6 grid-rows-[auto_auto] gap-4 px-4">
       <div className="col-span-4 flex flex-col gap-6 rounded-xl bg-muted p-4">
         <div className="inline-flex w-full items-center justify-between">
-          <h2 className="font-medium">Containers</h2>
+          <h2 className="font-medium text-foreground/70">Containers</h2>
           <Box className="size-3.5" />
         </div>
 
@@ -147,7 +147,7 @@ export function HostState() {
 
       <div className="col-span-2 flex flex-col justify-between rounded-xl bg-muted p-4">
         <div className="inline-flex w-full items-center justify-between">
-          <h2 className="font-medium">Images</h2>
+          <h2 className="font-medium text-foreground/70">Images</h2>
           <Layers className="size-3.5" />
         </div>
 
@@ -158,7 +158,7 @@ export function HostState() {
       </div>
 
       <div className="col-span-2 flex flex-col gap-6 rounded-xl bg-muted p-4">
-        <div className="inline-flex w-full items-center justify-between text-neutral-700">
+        <div className="inline-flex w-full items-center justify-between text-foreground/70">
           <h3 className="font-medium text-sm">CPU</h3>
           <Cpu className="size-3.5" />
         </div>
@@ -170,7 +170,7 @@ export function HostState() {
       </div>
 
       <div className="col-span-2 flex flex-col gap-6 rounded-xl bg-muted p-4">
-        <div className="inline-flex w-full items-center justify-between text-neutral-700">
+        <div className="inline-flex w-full items-center justify-between text-foreground/70">
           <h3 className="font-medium text-sm">RAM</h3>
           <MemoryStick className="size-3.5" />
         </div>
@@ -182,7 +182,7 @@ export function HostState() {
       </div>
 
       <div className="col-span-2 flex flex-col gap-6 rounded-xl bg-muted p-4">
-        <div className="inline-flex w-full items-center justify-between text-neutral-700">
+        <div className="inline-flex w-full items-center justify-between text-foreground/70">
           <h3 className="font-medium text-sm">DISK</h3>
           <Save className="size-3.5" />
         </div>

@@ -75,7 +75,7 @@ function SignIn() {
 
           <div className="flex flex-col items-center gap-1">
             <h1 className="font-medium text-lg">Sign in</h1>
-            <p className="text-balance text-center text-neutral-700 text-sm">
+            <p className="text-balance text-center text-foreground/70 text-sm">
               Access your Base dashboard.
             </p>
           </div>
