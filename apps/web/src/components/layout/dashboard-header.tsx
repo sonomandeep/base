@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import { Button } from "#/components/ui/button";
@@ -74,8 +74,8 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         <DropdownMenuTrigger
           className="-mr-2"
           render={
-            <Button className="h-8" variant="ghost">
-              <p className="text-sm">{displayName}</p>
+            <Button className="h-8 gap-4" variant="ghost">
+              <p className="font-medium text-xs">{displayName}</p>
 
               <Avatar size="sm">
                 {user.image ? <AvatarImage src={user.image} /> : null}
@@ -89,21 +89,28 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
           <DropdownMenuGroup>
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar>
+                <Avatar size="sm">
                   {user.image ? <AvatarImage src={user.image} /> : null}
                   <AvatarFallback className="rounded-lg">
                     {fallback}
                   </AvatarFallback>
                 </Avatar>
 
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate text-foreground">{user.name}</span>
+                <div className="grid flex-1 text-left leading-tight">
+                  <span className="truncate font-medium text-foreground text-xs">
+                    {displayName}
+                  </span>
                   <span className="truncate text-muted-foreground text-xs">
                     {user.email}
                   </span>
                 </div>
               </div>
             </DropdownMenuLabel>
+
+            <DropdownMenuItem>
+              <User />
+              Profile
+            </DropdownMenuItem>
 
             <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />
