@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { LogOut, User } from "lucide-react";
+import { LogOut, Monitor, Moon, Sun, User } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import { Button } from "#/components/ui/button";
@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "#/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "#/components/ui/toggle-group";
 import { authClient } from "#/lib/auth-client";
 
 interface DashboardHeaderProps {
@@ -106,6 +107,36 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                 </div>
               </div>
             </DropdownMenuLabel>
+
+            <div className="rounded-lg bg-muted p-1">
+              <ToggleGroup
+                className="grid w-full grid-cols-3 rounded-md"
+                size="sm"
+                spacing={0}
+              >
+                <ToggleGroupItem
+                  aria-label="Light theme"
+                  className="aria-pressed:bg-background dark:aria-pressed:bg-input/30"
+                  value="light"
+                >
+                  <Sun />
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  aria-label="Dark theme"
+                  className="aria-pressed:bg-background dark:aria-pressed:bg-input/30"
+                  value="dark"
+                >
+                  <Moon />
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  aria-label="System theme"
+                  className="aria-pressed:bg-background dark:aria-pressed:bg-input/30"
+                  value="system"
+                >
+                  <Monitor />
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
 
             <DropdownMenuItem>
               <User />
