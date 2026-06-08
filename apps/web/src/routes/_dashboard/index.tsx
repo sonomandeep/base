@@ -1,7 +1,6 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { ArrowRight, HardDrive, Network } from "lucide-react";
 import prettyBytes from "pretty-bytes";
-import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { Button } from "#/components/ui/button";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
 import {
@@ -54,8 +53,7 @@ function Home() {
   const images = loader.images.slice(0, 5);
 
   return (
-    <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
-      <DashboardHeader />
+    <>
       <HostState />
 
       <ContainerList initialContainers={loader.containers} limit={5} stream>
@@ -150,6 +148,6 @@ function Home() {
           ))}
         </ItemGroup>
       </section>
-    </div>
+    </>
   );
 }

@@ -1,5 +1,4 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { DashboardHeader } from "#/components/layout/dashboard-header";
 import {
   ContainerList,
   ContainerListHeader,
@@ -35,8 +34,7 @@ function RouteComponent() {
   const loader = Route.useLoaderData();
 
   return (
-    <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
-      <DashboardHeader />
+    <>
       <HostState />
 
       <ContainerList initialContainers={loader.containers}>
@@ -49,6 +47,6 @@ function RouteComponent() {
 
         <ContainerListItems />
       </ContainerList>
-    </div>
+    </>
   );
 }

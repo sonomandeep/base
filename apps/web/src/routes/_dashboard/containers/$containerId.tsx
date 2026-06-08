@@ -9,7 +9,6 @@ import {
   Square,
 } from "lucide-react";
 import prettyBytes from "pretty-bytes";
-import { DashboardHeader } from "#/components/layout/dashboard-header";
 import { Button } from "#/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { ContainerEnvs } from "#/features/containers/components/container-envs";
@@ -136,14 +135,11 @@ function RouteComponent() {
 
   if (!container) {
     return (
-      <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
-        <DashboardHeader />
-        <section className="px-4">
-          <div className="rounded-xl bg-muted p-4">
-            <h1 className="font-medium">Container not found</h1>
-          </div>
-        </section>
-      </div>
+      <section className="px-4">
+        <div className="rounded-xl bg-muted p-4">
+          <h1 className="font-medium">Container not found</h1>
+        </div>
+      </section>
     );
   }
 
@@ -157,9 +153,7 @@ function RouteComponent() {
   ];
 
   return (
-    <div className="mx-auto my-12 flex max-w-136 flex-col gap-8">
-      <DashboardHeader />
-
+    <>
       <section className="flex flex-col gap-6 px-4">
         <div className="inline-flex items-center justify-between">
           <h1 className="font-medium">{container.name}</h1>
@@ -242,6 +236,6 @@ function RouteComponent() {
           <ContainerVolumes mounts={container.mounts} />
         </TabsContent>
       </Tabs>
-    </div>
+    </>
   );
 }
