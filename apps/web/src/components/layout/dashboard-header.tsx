@@ -108,7 +108,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
               </div>
             </DropdownMenuLabel>
 
-            <div className="rounded-lg bg-muted p-1">
+            <div className="my-1 rounded-lg bg-muted p-1">
               <ToggleGroup
                 className="grid w-full grid-cols-3 rounded-md"
                 size="sm"
