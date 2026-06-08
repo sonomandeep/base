@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
   Cpu,
   EllipsisVertical,
@@ -18,10 +18,24 @@ import { ContainerPorts } from "#/features/containers/components/container-ports
 import { ContainerShellTab } from "#/features/containers/components/container-shell-tab";
 import { ContainerVolumes } from "#/features/containers/components/container-volumes";
 import { getContainerFn } from "#/features/containers/functions";
+import { isUnauthorizedError } from "#/lib/api/errors";
 
 export const Route = createFileRoute("/_dashboard/containers/$containerId")({
   component: RouteComponent,
-  loader: ({ params }) => getContainerFn({ data: { id: params.containerId } }),
+  loader: async ({ location, params }) => {
+    try {
+      return await getContainerFn({ data: { id: params.containerId } });
+    } catch (error) {
+      if (isUnauthorizedError(error)) {
+        throw redirect({
+          search: { redirect: location.href },
+          to: "/auth/sign-in",
+        });
+      }
+
+      throw error;
+    }
+  },
 });
 
 const tabs = ["Shell", "Networks", "Envs", "Volumes", "Ports"];

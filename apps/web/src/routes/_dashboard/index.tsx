@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { ArrowRight, HardDrive, Network } from "lucide-react";
 import prettyBytes from "pretty-bytes";
 import { DashboardHeader } from "#/components/layout/dashboard-header";
@@ -15,21 +15,33 @@ import { HostState } from "#/features/hosts/components/host-state";
 import { getImagesFn } from "#/features/images/functions";
 import { getNetworkStateSummaryFn } from "#/features/networks/functions";
 import { getVolumeStateSummaryFn } from "#/features/volumes/functions";
+import { isUnauthorizedError } from "#/lib/api/errors";
 
 export const Route = createFileRoute("/_dashboard/")({
   head: () => ({
     meta: [{ title: "Base | Dashboard" }],
   }),
   component: Home,
-  loader: async () => {
-    const [containers, images, networks, volumes] = await Promise.all([
-      getContainersFn(),
-      getImagesFn(),
-      getNetworkStateSummaryFn(),
-      getVolumeStateSummaryFn(),
-    ]);
+  loader: async ({ location }) => {
+    try {
+      const [containers, images, networks, volumes] = await Promise.all([
+        getContainersFn(),
+        getImagesFn(),
+        getNetworkStateSummaryFn(),
+        getVolumeStateSummaryFn(),
+      ]);
 
-    return { containers, images, networks, volumes };
+      return { containers, images, networks, volumes };
+    } catch (error) {
+      if (isUnauthorizedError(error)) {
+        throw redirect({
+          search: { redirect: location.href },
+          to: "/auth/sign-in",
+        });
+      }
+
+      throw error;
+    }
   },
 });
 

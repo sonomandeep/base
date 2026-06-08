@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
 import { api } from "#/lib/api/client";
+import { throwIfUnauthorizedApiError } from "#/lib/api/errors";
 import { ensureSessionFn } from "../auth/functions";
 
 export const getImagesFn = createServerFn().handler(async () => {
@@ -13,6 +14,7 @@ export const getImagesFn = createServerFn().handler(async () => {
   });
 
   if (error) {
+    throwIfUnauthorizedApiError(error);
     console.error(error.value);
     return [];
   }

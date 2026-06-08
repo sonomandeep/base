@@ -3,6 +3,7 @@ import { getRequestHeaders } from "@tanstack/react-start/server";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { api } from "#/lib/api/client";
+import { throwIfUnauthorizedApiError } from "#/lib/api/errors";
 import { ensureSessionFn } from "../auth/functions";
 
 const getContainerInputSchema = z.object({
@@ -18,6 +19,7 @@ export const getContainersFn = createServerFn().handler(async () => {
     },
   });
   if (error) {
+    throwIfUnauthorizedApiError(error);
     console.error(error.value);
 
     return [];
@@ -38,6 +40,7 @@ export const getContainerFn = createServerFn({ method: "GET" })
     });
 
     if (error) {
+      throwIfUnauthorizedApiError(error);
       console.error(error.value);
       return null;
     }

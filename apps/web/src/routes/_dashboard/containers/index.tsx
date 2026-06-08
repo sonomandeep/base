@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { DashboardHeader } from "#/components/layout/dashboard-header";
 import {
   ContainerList,
@@ -8,14 +8,26 @@ import {
 } from "#/features/containers/components/container-list";
 import { getContainersFn } from "#/features/containers/functions";
 import { HostState } from "#/features/hosts/components/host-state";
+import { isUnauthorizedError } from "#/lib/api/errors";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_dashboard/containers/")({
   component: RouteComponent,
-  loader: async () => {
-    const containers = await getContainersFn();
+  loader: async ({ location }) => {
+    try {
+      const containers = await getContainersFn();
 
-    return { containers };
+      return { containers };
+    } catch (error) {
+      if (isUnauthorizedError(error)) {
+        throw redirect({
+          search: { redirect: location.href },
+          to: "/auth/sign-in",
+        });
+      }
+
+      throw error;
+    }
   },
 });
 
