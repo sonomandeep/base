@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { LogOut, Monitor, Moon, Sun, User } from "lucide-react";
 import { toast } from "sonner";
+import { useTheme } from "#/components/theme-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import { Button } from "#/components/ui/button";
 import {
@@ -36,6 +37,7 @@ function getInitial(value: string) {
 
 export function DashboardHeader({ user }: DashboardHeaderProps) {
   const navigate = useNavigate();
+  const { setTheme, theme } = useTheme();
   const displayName = user.name || user.email || "User";
   const fallback = getInitial(displayName);
 
@@ -111,8 +113,16 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
             <div className="my-1 rounded-lg bg-muted p-1">
               <ToggleGroup
                 className="grid w-full grid-cols-3 rounded-md"
+                onValueChange={(value) => {
+                  const [nextTheme] = value;
+
+                  if (nextTheme) {
+                    setTheme(nextTheme);
+                  }
+                }}
                 size="sm"
                 spacing={0}
+                value={[theme]}
               >
                 <ToggleGroupItem
                   aria-label="Light theme"
