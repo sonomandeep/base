@@ -1,4 +1,9 @@
-import { Copy, Eye, EyeOff } from "lucide-react";
+import {
+  Copy01Icon,
+  ViewIcon,
+  ViewOffSlashIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { Button } from "#/components/ui/button";
 import {
@@ -86,7 +91,19 @@ export function ContainerEnvs({ envs }: ContainerEnvsProps) {
                         size="icon-sm"
                         variant="ghost"
                       >
-                        {isVisible ? <EyeOff /> : <Eye />}
+                        {isVisible ? (
+                          <HugeiconsIcon
+                            className="size-3.5"
+                            icon={ViewOffSlashIcon}
+                            strokeWidth={2}
+                          />
+                        ) : (
+                          <HugeiconsIcon
+                            className="size-3.5"
+                            icon={ViewIcon}
+                            strokeWidth={2}
+                          />
+                        )}
                       </Button>
                       <Button
                         aria-label={`Copy ${env.key} value`}
@@ -94,7 +111,11 @@ export function ContainerEnvs({ envs }: ContainerEnvsProps) {
                         size="icon-sm"
                         variant="ghost"
                       >
-                        <Copy />
+                        <HugeiconsIcon
+                          className="size-3.5"
+                          icon={Copy01Icon}
+                          strokeWidth={2}
+                        />
                       </Button>
                     </ItemActions>
                   </div>

@@ -1,5 +1,12 @@
+import {
+  ComputerIcon,
+  Logout02Icon,
+  Moon02Icon,
+  Sun03Icon,
+  UserIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useNavigate } from "@tanstack/react-router";
-import { LogOut, Monitor, Moon, Sun, User } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "#/components/theme-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
@@ -129,32 +136,52 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                   className="aria-pressed:bg-background dark:aria-pressed:bg-input/30"
                   value="light"
                 >
-                  <Sun />
+                  <HugeiconsIcon
+                    className="size-3.5"
+                    icon={Sun03Icon}
+                    strokeWidth={2}
+                  />
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   aria-label="Dark theme"
                   className="aria-pressed:bg-background dark:aria-pressed:bg-input/30"
                   value="dark"
                 >
-                  <Moon />
+                  <HugeiconsIcon
+                    className="size-3.5"
+                    icon={Moon02Icon}
+                    strokeWidth={2}
+                  />
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   aria-label="System theme"
                   className="aria-pressed:bg-background dark:aria-pressed:bg-input/30"
                   value="system"
                 >
-                  <Monitor />
+                  <HugeiconsIcon
+                    className="size-3.5"
+                    icon={ComputerIcon}
+                    strokeWidth={2}
+                  />
                 </ToggleGroupItem>
               </ToggleGroup>
             </div>
 
             <DropdownMenuItem>
-              <User />
+              <HugeiconsIcon
+                className="size-3.5"
+                icon={UserIcon}
+                strokeWidth={2}
+              />
               Profile
             </DropdownMenuItem>
 
             <DropdownMenuItem onClick={handleSignOut}>
-              <LogOut />
+              <HugeiconsIcon
+                className="size-3.5"
+                icon={Logout02Icon}
+                strokeWidth={2}
+              />
               Sign out
             </DropdownMenuItem>
           </DropdownMenuGroup>

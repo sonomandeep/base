@@ -1,4 +1,5 @@
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVerticalIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import prettyBytes from "pretty-bytes";
 import { Button } from "#/components/ui/button";
 import {
@@ -90,7 +91,11 @@ export function ContainerVolumes({ mounts }: ContainerVolumesProps) {
                         <DropdownMenuTrigger
                           render={
                             <Button size="icon" variant="ghost">
-                              <EllipsisVertical />
+                              <HugeiconsIcon
+                                className="size-3.5"
+                                icon={EllipsisVerticalIcon}
+                                strokeWidth={2}
+                              />
                             </Button>
                           }
                         />

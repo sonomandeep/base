@@ -1,5 +1,10 @@
+import {
+  ArrowRight01Icon,
+  ExternalDriveIcon,
+  WorkflowSquare06Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { ArrowRight, HardDrive, Network } from "lucide-react";
 import prettyBytes from "pretty-bytes";
 import { Button } from "#/components/ui/button";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
@@ -64,7 +69,12 @@ function Home() {
             nativeButton={false}
             render={
               <Link to="/containers">
-                View all <ArrowRight className="size-3" />
+                View all
+                <HugeiconsIcon
+                  className="size-3"
+                  icon={ArrowRight01Icon}
+                  strokeWidth={2}
+                />
               </Link>
             }
             variant="ghost"
@@ -78,7 +88,11 @@ function Home() {
         <div className="col-span-3 flex flex-col gap-6 rounded-xl bg-muted p-4">
           <div className="inline-flex w-full items-center justify-between text-foreground/70">
             <h3 className="font-medium text-sm">Networks</h3>
-            <Network className="size-3.5" />
+            <HugeiconsIcon
+              className="size-3.5"
+              icon={WorkflowSquare06Icon}
+              strokeWidth={2}
+            />
           </div>
 
           <div className="inline-flex items-baseline gap-3 font-mono">
@@ -96,7 +110,12 @@ function Home() {
         <div className="col-span-3 flex flex-col gap-6 rounded-xl bg-muted p-4">
           <div className="inline-flex w-full items-center justify-between text-foreground/70">
             <h3 className="font-medium text-sm">Volumes</h3>
-            <HardDrive className="size-3.5" />
+
+            <HugeiconsIcon
+              className="size-3.5"
+              icon={ExternalDriveIcon}
+              strokeWidth={2}
+            />
           </div>
 
           <div className="inline-flex items-baseline gap-3 font-mono">
@@ -118,7 +137,12 @@ function Home() {
             nativeButton={false}
             render={
               <Link to="/images">
-                View all <ArrowRight className="size-3" />
+                View all
+                <HugeiconsIcon
+                  className="size-3"
+                  icon={ArrowRight01Icon}
+                  strokeWidth={2}
+                />
               </Link>
             }
             variant="ghost"

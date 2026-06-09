@@ -1,4 +1,11 @@
-import { Box, Cpu, Layers, MemoryStick, Save } from "lucide-react";
+import {
+  ContainerIcon,
+  CpuIcon,
+  Layers01Icon,
+  MemoryStickIcon,
+  SaveIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import prettyBytes from "pretty-bytes";
 import { useEffect, useState } from "react";
 import { api } from "#/lib/api/client";
@@ -86,7 +93,11 @@ export function HostState() {
       <div className="col-span-4 flex flex-col gap-6 rounded-xl bg-muted p-4">
         <div className="inline-flex w-full items-center justify-between">
           <h2 className="font-medium text-foreground/70">Containers</h2>
-          <Box className="size-3.5" />
+          <HugeiconsIcon
+            className="size-3.5"
+            icon={ContainerIcon}
+            strokeWidth={2}
+          />
         </div>
 
         <div className="flex flex-col gap-4">
@@ -148,7 +159,11 @@ export function HostState() {
       <div className="col-span-2 flex flex-col justify-between rounded-xl bg-muted p-4">
         <div className="inline-flex w-full items-center justify-between">
           <h2 className="font-medium text-foreground/70">Images</h2>
-          <Layers className="size-3.5" />
+          <HugeiconsIcon
+            className="size-3.5"
+            icon={Layers01Icon}
+            strokeWidth={2}
+          />
         </div>
 
         <div className="inline-flex items-baseline gap-3 font-mono">
@@ -160,7 +175,7 @@ export function HostState() {
       <div className="col-span-2 flex flex-col gap-6 rounded-xl bg-muted p-4">
         <div className="inline-flex w-full items-center justify-between text-foreground/70">
           <h3 className="font-medium text-sm tracking-wide">CPU</h3>
-          <Cpu className="size-3.5" />
+          <HugeiconsIcon className="size-3.5" icon={CpuIcon} strokeWidth={2} />
         </div>
 
         <div className="inline-flex items-baseline gap-3 font-mono">
@@ -172,7 +187,11 @@ export function HostState() {
       <div className="col-span-2 flex flex-col gap-6 rounded-xl bg-muted p-4">
         <div className="inline-flex w-full items-center justify-between text-foreground/70">
           <h3 className="font-medium text-sm tracking-wide">RAM</h3>
-          <MemoryStick className="size-3.5" />
+          <HugeiconsIcon
+            className="size-3.5"
+            icon={MemoryStickIcon}
+            strokeWidth={2}
+          />
         </div>
 
         <div className="inline-flex items-baseline gap-3 font-mono">
@@ -184,7 +203,8 @@ export function HostState() {
       <div className="col-span-2 flex flex-col gap-6 rounded-xl bg-muted p-4">
         <div className="inline-flex w-full items-center justify-between text-foreground/70">
           <h3 className="font-medium text-sm tracking-wide">DISK</h3>
-          <Save className="size-3.5" />
+
+          <HugeiconsIcon className="size-3.5" icon={SaveIcon} strokeWidth={2} />
         </div>
 
         <div className="inline-flex items-baseline gap-3 font-mono">

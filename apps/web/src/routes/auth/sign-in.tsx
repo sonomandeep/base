@@ -1,6 +1,7 @@
+import { CornerDownLeftIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CornerDownLeft } from "lucide-react";
 import { z } from "zod";
 import { Button } from "#/components/ui/button";
 import {
@@ -179,7 +180,11 @@ function SignIn() {
                 {isSubmitting ? (
                   <Spinner />
                 ) : (
-                  <CornerDownLeft className="ml-1 size-3 opacity-60" />
+                  <HugeiconsIcon
+                    className="size-3.5"
+                    icon={CornerDownLeftIcon}
+                    strokeWidth={2}
+                  />
                 )}
               </Button>
             );

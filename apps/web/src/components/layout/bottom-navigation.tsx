@@ -1,17 +1,32 @@
+import {
+  ContainerIcon,
+  DocumentCodeIcon,
+  HomeIcon,
+  Layers01Icon,
+  Settings02Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import type { LucideIcon } from "lucide-react";
-import { Box, Home, Layers, ScrollText, Settings } from "lucide-react";
-
 import { cn } from "#/lib/utils";
 
 const items = [
-  { icon: Home, label: "Home", match: "/", to: "/" },
-  { icon: Box, label: "Containers", match: "/containers", to: "/containers" },
-  { icon: Layers, label: "Images", match: "/images", to: "/images" },
-  { icon: ScrollText, label: "Logs", match: "/logs", to: "/logs" },
-  { icon: Settings, label: "Settings", match: "/settings", to: "/settings" },
+  { icon: HomeIcon, label: "Home", match: "/", to: "/" },
+  {
+    icon: ContainerIcon,
+    label: "Containers",
+    match: "/containers",
+    to: "/containers",
+  },
+  { icon: Layers01Icon, label: "Images", match: "/images", to: "/images" },
+  { icon: DocumentCodeIcon, label: "Logs", match: "/logs", to: "/logs" },
+  {
+    icon: Settings02Icon,
+    label: "Settings",
+    match: "/settings",
+    to: "/settings",
+  },
 ] satisfies Array<{
-  icon: LucideIcon;
+  icon: IconSvgElement;
   label: string;
   match: string;
   to: string;
@@ -38,7 +53,6 @@ export function BottomNavigation() {
       <ul className="flex items-center gap-3">
         {items.map((item) => {
           const active = isActive(pathname, item.match);
-          const Icon = item.icon;
 
           return (
             <li key={item.to}>
@@ -51,7 +65,11 @@ export function BottomNavigation() {
                 )}
                 to={item.to}
               >
-                <Icon className="size-3.5" />
+                <HugeiconsIcon
+                  className="size-3.5"
+                  icon={item.icon}
+                  strokeWidth={2}
+                />
               </Link>
             </li>
           );

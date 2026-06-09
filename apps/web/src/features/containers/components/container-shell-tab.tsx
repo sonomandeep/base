@@ -1,4 +1,5 @@
-import { Eraser, RefreshCw } from "lucide-react";
+import { EraserIcon, Refresh04Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { Button } from "#/components/ui/button";
 import { ContainerShell } from "./container-shell";
@@ -28,7 +29,11 @@ export function ContainerShellTab({
             size="icon-sm"
             variant="ghost"
           >
-            <RefreshCw />
+            <HugeiconsIcon
+              className="size-3.5"
+              icon={Refresh04Icon}
+              strokeWidth={2}
+            />
           </Button>
           <Button
             aria-label="Clear shell"
@@ -37,7 +42,11 @@ export function ContainerShellTab({
             size="icon-sm"
             variant="ghost"
           >
-            <Eraser />
+            <HugeiconsIcon
+              className="size-3.5"
+              icon={EraserIcon}
+              strokeWidth={2}
+            />
           </Button>
         </div>
       </div>

@@ -1,13 +1,13 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
-  Cpu,
-  EllipsisVertical,
-  type LucideIcon,
-  MemoryStick,
-  RefreshCw,
-  Save,
-  Square,
-} from "lucide-react";
+  CpuIcon,
+  EllipsisVerticalIcon,
+  MemoryStickIcon,
+  Refresh04Icon,
+  SaveIcon,
+  SquareIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import prettyBytes from "pretty-bytes";
 import { Button } from "#/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
@@ -105,12 +105,12 @@ function formatVolumes(count: number) {
 }
 
 function MetricCard({
-  icon: Icon,
+  icon,
   label,
   secondary,
   value,
 }: {
-  icon: LucideIcon;
+  icon: IconSvgElement;
   label: string;
   secondary: string;
   value: string;
@@ -119,7 +119,8 @@ function MetricCard({
     <div className="col-span-2 flex flex-col gap-6 rounded-xl bg-muted p-4">
       <div className="inline-flex w-full items-center justify-between text-foreground/70">
         <h3 className="font-medium text-sm">{label}</h3>
-        <Icon className="size-3.5" />
+
+        <HugeiconsIcon className="size-3.5" icon={icon} strokeWidth={2} />
       </div>
 
       <div className="inline-flex items-baseline gap-3 font-mono">
@@ -160,32 +161,44 @@ function RouteComponent() {
 
           <div className="inline-flex items-center gap-2">
             <Button size="icon-sm" variant="ghost">
-              <Square />
+              <HugeiconsIcon
+                className="size-3.5"
+                icon={SquareIcon}
+                strokeWidth={2}
+              />
             </Button>
             <Button size="icon-sm" variant="ghost">
-              <RefreshCw />
+              <HugeiconsIcon
+                className="size-3.5"
+                icon={Refresh04Icon}
+                strokeWidth={2}
+              />
             </Button>
             <Button size="icon-sm" variant="ghost">
-              <EllipsisVertical />
+              <HugeiconsIcon
+                className="size-3.5"
+                icon={EllipsisVerticalIcon}
+                strokeWidth={2}
+              />
             </Button>
           </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-6">
           <MetricCard
-            icon={Cpu}
+            icon={CpuIcon}
             label="CPU"
             secondary={formatCpuLimit(container.cpu.limitCores)}
             value={formatPercent(container.cpu.usage)}
           />
           <MetricCard
-            icon={MemoryStick}
+            icon={MemoryStickIcon}
             label="RAM"
             secondary={formatBytes(container.memory.limit, { binary: true })}
             value={formatPercent(container.memory.usage)}
           />
           <MetricCard
-            icon={Save}
+            icon={SaveIcon}
             label="DISK"
             secondary={formatBytes(container.disk.size)}
             value={formatPercent(container.disk.usage)}
