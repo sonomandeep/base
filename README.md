@@ -4,6 +4,18 @@
 
 This project is under active development. Documentation will follow as it takes shape.
 
+## Continuous integration
+
+The **CI** workflow runs on pull requests targeting `main` and on pushes to `main`,
+including release PRs created by the GitHub App. Its **Verify** job installs
+dependencies with a frozen lockfile, then runs `vp run ready` for formatting,
+linting, type checks, workspace tests, and production builds.
+
+The workflow uses the Node.js version from `.node-version`, the Vite+ version from
+`pnpm-workspace.yaml`, and the pnpm version declared in the root `package.json`.
+It runs with read-only repository access and does not require secrets. Run the
+same verification locally with `vp run ready`.
+
 ## Releases
 
 [Release Please](https://github.com/googleapis/release-please) manages independent
@@ -81,10 +93,10 @@ Before the release workflow can run:
    `RELEASE_PLEASE_APP_PRIVATE_KEY` with the generated PEM private key.
 3. Enable squash merging and disable merge commits and rebase merging. Set the
    default squash commit message to **Pull request title and description**.
-4. Require pull requests for `main` and add **Validate PR title** as a required
-   status check once the workflow has run. The title workflow uses
-   `pull_request_target` without checking out PR code, so it also supports forks;
-   it first becomes active after being merged into `main`.
+4. Require pull requests for `main` and add **Validate PR title** and **Verify** as
+   required status checks once their workflows have run successfully. The title
+   workflow uses `pull_request_target` without checking out PR code, so it also
+   supports forks; it first becomes active after being merged into `main`.
 
 The GitHub App token is scoped to this repository and lets release PRs trigger
 other workflows. Using the built-in `GITHUB_TOKEN` for Release Please would
