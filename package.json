@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "ready": "vp check && vp run -r test && vp run -r build",
-    "dev": "vp run app#dev",
+    "dev": "vp run --filter './apps/**' dev",
     "prepare": "vp config"
   },
   "devDependencies": {

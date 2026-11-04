@@ -4,8 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vpx --watch src/index.ts",
-    "build": "tsc -p tsconfig.json",
     "start": "NODE_ENV=production node dist/index.js"
   },
   "dependencies": {

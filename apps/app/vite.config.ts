@@ -9,6 +9,19 @@ import { nitro } from "nitro/vite";
 import { lazyPlugins } from "vite-plus";
 
 const config = defineConfig({
+  run: {
+    tasks: {
+      dev: {
+        command: "vp dev --port 5173",
+        cache: false,
+        dependsOn: [{ task: "build", from: ["dependencies", "devDependencies"] }],
+      },
+      build: {
+        command: "vp build",
+        dependsOn: [{ task: "build", from: ["dependencies", "devDependencies"] }],
+      },
+    },
+  },
   resolve: { tsconfigPaths: true },
   plugins: lazyPlugins(() => [
     devtools(),

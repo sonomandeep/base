@@ -6,9 +6,7 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "vp dev --port 5173",
     "generate-routes": "vp build",
-    "build": "vp build",
     "preview": "vp preview",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
