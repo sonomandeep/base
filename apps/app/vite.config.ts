@@ -21,6 +21,10 @@ const config = defineConfig({
       build: {
         command: "vp build",
         dependsOn: [{ task: "build", from: ["dependencies", "devDependencies"] }],
+        cache: {
+          input: [{ auto: true }, "!.output/**"],
+          output: [{ auto: true }, ".output/**"],
+        },
       },
     },
   },
