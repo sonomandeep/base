@@ -17,6 +17,10 @@ dist-ssr
 .env.*
 !.env.example
 
+# Local SQLite database
+apps/api/local.db
+apps/api/local.db-*
+
 # Editor directories and files
 .vscode/*
 !.vscode/settings.json
