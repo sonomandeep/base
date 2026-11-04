@@ -8,6 +8,8 @@ import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
 import { lazyPlugins } from "vite-plus";
 
+const isTest = process.env.VITEST === "true";
+
 const config = defineConfig({
   run: {
     tasks: {
@@ -23,13 +25,18 @@ const config = defineConfig({
     },
   },
   resolve: { tsconfigPaths: true },
-  plugins: lazyPlugins(() => [
-    devtools(),
-    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ]),
+  // Unit tests do not need the application's SSR servers or devtools.
+  plugins: lazyPlugins(() =>
+    isTest
+      ? [viteReact()]
+      : [
+          devtools(),
+          nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+          tailwindcss(),
+          tanstackStart(),
+          viteReact(),
+        ],
+  ),
 });
 
 export default config;
