@@ -8,15 +8,11 @@
   "tailwind": true,
   "projectPreset": "default",
   "routerOnly": false,
-  "addOnOptions": {
-    "drizzle": {
-      "database": "sqlite"
-    }
-  },
+  "addOnOptions": {},
   "git": false,
   "install": false,
   "intent": true,
   "version": 1,
   "framework": "react",
-  "chosenAddOns": ["nitro", "drizzle"]
+  "chosenAddOns": ["nitro"]
 }
