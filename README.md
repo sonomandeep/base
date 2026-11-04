@@ -18,8 +18,9 @@ when they exist.
 
 Each component's first release is `0.0.1`. Commits up to and including the
 `bootstrap-sha` in `release-please-config.json` are excluded from the initial
-changelogs. The empty `.release-please-manifest.json` does not mark any version as
-already released; Release Please updates it when release PRs are merged.
+changelogs. `.release-please-manifest.json` records the released version of each
+component; components without a first release can be absent. Release Please
+updates the manifest when release PRs are merged.
 
 ### Pull requests
 
