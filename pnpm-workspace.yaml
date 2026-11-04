@@ -6,7 +6,7 @@ packages:
 catalogMode: prefer
 
 catalog:
-  "@types/node": ^24
+  "@types/node": ^26
   typescript: ^7.0.2
   vite: npm:@voidzero-dev/vite-plus-core@1.5.0
   vite-plus: 1.5.0
@@ -50,3 +50,15 @@ minimumReleaseAgeExclude:
   - oxfmt@0.76.0
   - oxlint@1.91.0
   - vite-plus@1.5.0
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
+permissions:
+  "@tanstack/devtools-vite":
+    skills: true
+  "@tanstack/react-router":
+    skills: true
+  "@tanstack/react-start":
+    skills: true
+  dotenv:
+    skills: true
