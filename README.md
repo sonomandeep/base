@@ -23,17 +23,17 @@ already released; Release Please updates it when release PRs are merged.
 
 ### Pull requests
 
-Use a [Conventional Commit](https://www.conventionalcommits.org/) title, for example:
+Use [Conventional Commit](https://www.conventionalcommits.org/) messages and PR
+titles without scopes. The PR title check rejects scopes. For example:
 
 ```text
-feat(app): add workspace selector
-fix(api): handle expired sessions
+feat: add workspace selector
+fix: handle expired sessions
 chore: update development tooling
-feat(api)!: change authentication response
+feat!: change authentication response
 ```
 
-Scopes are optional and descriptive. Release Please assigns changes to components
-by modified file paths, not by scope. A PR that changes both app and API can affect
+Release Please assigns changes to components by modified file paths, not by scope. A PR that changes both app and API can affect
 both versions with the same commit type. Changes only to root tooling do not
 automatically release either component.
 

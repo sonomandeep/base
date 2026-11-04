@@ -31,8 +31,18 @@ Run these commands from the repository root:
 
 # Git & Pull Requests
 
-- Use Conventional Commits for commit messages and PR titles
-  (e.g., `fix: handle missing user`).
+- Use Conventional Commits without scopes for commit messages and
+  PR titles (e.g., `fix: handle missing user`, not `fix(api): ...`).
 - Keep commit and PR titles concise, specific, and immediately
   understandable.
 - Follow `.github/pull_request_template.md` when preparing PRs.
+
+# Releases
+
+- Release Please manages independent component versions and changelogs.
+  Do not update them or `.release-please-manifest.json` manually
+  during normal feature and fix work.
+- PRs are squash-merged. Use `fix` for patch releases, `feat` for
+  minor releases, and `!` or a `BREAKING CHANGE:` footer for breaking
+  changes. Breaking changes bump minor before `1.0.0`, major afterward.
+- Components are selected by modified paths, not commit scopes.
