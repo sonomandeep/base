@@ -6,7 +6,7 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "vp dev --port 3000",
+    "dev": "vp dev --port 5173",
     "generate-routes": "vp build",
     "build": "vp build",
     "preview": "vp preview",
@@ -39,7 +39,6 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
     "dotenv": "^17.3.1",
-    "tsx": "^4.21.0",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
