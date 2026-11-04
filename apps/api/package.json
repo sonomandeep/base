@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "vp test --passWithNoTests",
     "start": "NODE_ENV=production node dist/index.js"
   },
   "dependencies": {

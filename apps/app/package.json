@@ -6,6 +6,7 @@
     "#/*": "./src/*"
   },
   "scripts": {
+    "test": "vp test --passWithNoTests",
     "generate-routes": "vp build",
     "preview": "vp preview"
   },

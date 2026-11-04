@@ -10,7 +10,7 @@ A starter for creating a Vite+ monorepo.
 vp run ready
 ```
 
-- Run the tests:
+- Run the tests (succeeds even when no test files exist yet):
 
 ```bash
 vp run -r test
@@ -38,11 +38,7 @@ so dependency builds are ordered recursively. Dependencies without a build task
 are skipped. Do not duplicate a task name in package.json scripts.
 
 These are initial builds, not library watchers. If a library is consumed from
-its dist directory, run its watcher in a separate terminal while editing it:
-
-```bash
-vp run utils#dev
-```
+its dist directory, run its watcher in a separate terminal while editing it.
 
 To start one application and prepare its dependencies:
 
