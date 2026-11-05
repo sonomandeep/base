@@ -10,13 +10,10 @@
     "start": "NODE_ENV=production node dist/index.js"
   },
   "dependencies": {
-    "@elysia/node": "catalog:",
     "@libsql/client": "catalog:",
-    "@sinclair/typebox": "catalog:",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
-    "elysia": "catalog:",
-    "openapi-types": "catalog:"
+    "fastify": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
