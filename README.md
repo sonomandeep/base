@@ -4,47 +4,6 @@
 
 This project is under active development. Documentation will follow as it takes shape.
 
-## API logging
-
-The API uses Fastify's built-in Pino logger. Configuration is read from the
-process environment and `apps/api/.env` when running from the API directory.
-
-Set `NODE_ENV` in `apps/api/.env` or the deployment environment; the development
-and start commands do not set it.
-
-- `NODE_ENV=development`: readable output via `pino-pretty`, with a default
-  level of `debug`.
-- `NODE_ENV=production`: JSON output to standard output, with a default level
-  of `info`. `pino-pretty` is not needed at runtime in production.
-- `NODE_ENV=test`: logging is disabled.
-
-If `NODE_ENV` is unset, the logger defaults to development. Other environment
-values use JSON output and the `info` level. Set `LOG_LEVEL` to override the
-level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`, or `silent`).
-
-Logs include `service: "api"`. Fastify automatically logs incoming requests and
-completed responses, including the request ID, status code, and response time.
-Use `request.log` inside handlers to preserve the request context, and `app.log`
-for events outside a request:
-
-```ts
-request.log.info({ orderId }, "Order created");
-request.log.warn({ orderId }, "Payment declined");
-request.log.error({ err: error, orderId }, "Order creation failed");
-
-app.log.info("Background job started");
-```
-
-Use structured fields for context and the `err` field for errors so Pino retains
-stack traces. Avoid logging the same error both in a handler and in a central
-error handler. Use `debug` for diagnostics, `info` for significant events,
-`warn` for recoverable anomalies, and `error` for failed operations.
-
-Authorization, cookie, and set-cookie headers are redacted when logged under
-`req.headers` and `res.headers`. Request bodies and headers are not logged by
-default; do not log passwords, tokens, full payloads, or secrets in messages,
-URLs, or other fields, which are not covered by these redaction paths.
-
 ## Continuous integration
 
 The **CI** workflow runs on pull requests targeting `main` and on pushes to `main`,
