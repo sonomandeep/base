@@ -1,7 +1,8 @@
 import Fastify from "fastify";
+import { loggerConfig } from "./lib/logger.js";
 
 const app = Fastify({
-  logger: true,
+  logger: loggerConfig,
 });
 
 app.get("/", async () => "Hello Fastify");
@@ -12,6 +13,6 @@ try {
     host: "0.0.0.0",
   });
 } catch (error) {
-  app.log.error(error);
+  app.log.error({ err: error }, "Failed to start API");
   process.exit(1);
 }
