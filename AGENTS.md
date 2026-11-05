@@ -3,8 +3,7 @@
 - This is a TypeScript monorepo using pnpm workspaces and Vite+.
 - `apps/app/`: web application built with React, TanStack Start,
   TanStack Router, and Tailwind CSS.
-- `apps/api/`: API built with Elysia, running on Node.js through
-  `@elysia/node`.
+- `apps/api/`: API built with Fastify, running on Node.js.
 
 # Tooling & Conventions
 
