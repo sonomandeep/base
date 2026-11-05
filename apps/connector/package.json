@@ -1,0 +1,12 @@
+{
+  "name": "connector",
+  "private": true,
+  "scripts": {
+    "dev": "go run .",
+    "check": "test -z \"$(gofmt -l .)\" && go vet ./...",
+    "fmt": "gofmt -w .",
+    "test": "go test ./...",
+    "build": "go build -o dist/connector .",
+    "start": "./dist/connector"
+  }
+}

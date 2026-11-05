@@ -16,6 +16,11 @@
     },
     "apps/api": {
       "component": "api"
+    },
+    "apps/connector": {
+      "component": "apps/connector",
+      "release-type": "go",
+      "tag-separator": "/"
     }
   }
 }
