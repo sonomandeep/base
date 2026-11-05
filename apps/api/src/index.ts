@@ -1,8 +1,17 @@
-import { Elysia } from "elysia";
-import { node } from "@elysia/node";
+import Fastify from "fastify";
 
-new Elysia({ adapter: node() })
-  .get("/", () => "Hello Elysia")
-  .listen(3000, ({ hostname, port }) => {
-    console.log(`🦊 Elysia is running at ${hostname}:${port}`);
+const app = Fastify({
+  logger: true,
+});
+
+app.get("/", async () => "Hello Fastify");
+
+try {
+  await app.listen({
+    port: 3000,
+    host: "0.0.0.0",
   });
+} catch (error) {
+  app.log.error(error);
+  process.exit(1);
+}
