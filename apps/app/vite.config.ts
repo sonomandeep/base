@@ -7,15 +7,20 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
 import { lazyPlugins } from "vite-plus";
+import { z } from "zod";
 
 const isTest = process.env.VITEST === "true";
 
 const config = defineConfig(({ mode }) => {
-  const env = loadEnv(mode, import.meta.dirname, "PORT");
+  const env = z
+    .object({
+      PORT: z.coerce.number().int().min(1).max(65535).default(5173),
+    })
+    .parse({ PORT: loadEnv(mode, import.meta.dirname, "PORT").PORT || undefined });
 
   return {
     server: {
-      port: Number(env.PORT || 5173),
+      port: env.PORT,
     },
     run: {
       tasks: {
@@ -41,7 +46,10 @@ const config = defineConfig(({ mode }) => {
         ? [viteReact()]
         : [
             devtools(),
-            nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+            nitro({
+              plugins: ["./plugins/env.ts"],
+              rollupConfig: { external: [/^@sentry\//] },
+            }),
             tailwindcss(),
             tanstackStart(),
             viteReact(),
