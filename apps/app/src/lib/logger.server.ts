@@ -1,20 +1,16 @@
 import "@tanstack/react-start/server-only";
-import "dotenv/config";
 import pino, { type LoggerOptions } from "pino";
-
-const environment = process.env.NODE_ENV ?? "development";
-const logLevel = process.env.LOG_LEVEL;
+import { env } from "../env.server";
 
 const loggerOptions: LoggerOptions = {
-  level: logLevel || "info",
+  level: env.LOG_LEVEL,
   base: { service: "app" },
   redact: ["req.headers.authorization", "req.headers.cookie", 'res.headers["set-cookie"]'],
 };
 
-const envToLogger: Record<string, LoggerOptions> = {
+const envToLogger: Record<typeof env.NODE_ENV, LoggerOptions> = {
   development: {
     ...loggerOptions,
-    level: logLevel || "debug",
     transport: {
       target: "pino-pretty",
     },
@@ -26,4 +22,4 @@ const envToLogger: Record<string, LoggerOptions> = {
   },
 };
 
-export const logger = pino(envToLogger[environment] ?? loggerOptions);
+export const logger = pino(envToLogger[env.NODE_ENV]);

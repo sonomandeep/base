@@ -1,10 +1,4 @@
-import "dotenv/config";
 import { drizzle } from "drizzle-orm/libsql";
+import { env } from "../env.js";
 
-const url = process.env.DB_FILE_NAME;
-
-if (!url) {
-  throw new Error("Missing DB_FILE_NAME environment variable");
-}
-
-export const db = drizzle(url);
+export const db = drizzle(env.DB_FILE_NAME);

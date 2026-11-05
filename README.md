@@ -4,6 +4,18 @@
 
 This project is under active development. Documentation will follow as it takes shape.
 
+## Environment variables
+
+Copy each application's `.env.example` to `.env` for local development. The API
+requires a non-empty `DB_FILE_NAME`; the app currently has no required variables.
+Both applications validate their server environment with Zod when their env module
+is imported, failing at startup if any value is missing or invalid.
+
+`NODE_ENV` defaults to `development`. `LOG_LEVEL` defaults to `debug` in development
+and `info` otherwise; logging is disabled in `test`. Empty optional values use the
+same defaults as missing values. The app also validates its Vite dev server `PORT`,
+which defaults to `5173`. See the `.env.example` files for supported values.
+
 ## Continuous integration
 
 The **CI** workflow runs on pull requests targeting `main` and on pushes to `main`,

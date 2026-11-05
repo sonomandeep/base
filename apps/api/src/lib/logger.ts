@@ -1,19 +1,15 @@
-import "dotenv/config";
 import type { FastifyServerOptions } from "fastify";
-
-const environment = process.env.NODE_ENV ?? "development";
-const logLevel = process.env.LOG_LEVEL;
+import { env } from "../env.js";
 
 const loggerOptions = {
-  level: logLevel || "info",
+  level: env.LOG_LEVEL,
   base: { service: "api" },
   redact: ["req.headers.authorization", "req.headers.cookie", 'res.headers["set-cookie"]'],
 };
 
-const envToLogger: Record<string, NonNullable<FastifyServerOptions["logger"]>> = {
+const envToLogger: Record<typeof env.NODE_ENV, NonNullable<FastifyServerOptions["logger"]>> = {
   development: {
     ...loggerOptions,
-    level: logLevel || "debug",
     transport: {
       target: "pino-pretty",
     },
@@ -22,4 +18,4 @@ const envToLogger: Record<string, NonNullable<FastifyServerOptions["logger"]>> =
   test: false,
 };
 
-export const loggerConfig = envToLogger[environment] ?? loggerOptions;
+export const loggerConfig = envToLogger[env.NODE_ENV];
