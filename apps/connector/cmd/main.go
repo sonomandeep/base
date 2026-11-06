@@ -2,9 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/moby/moby/client"
+	"github.com/moby/moby/api/types/events"
 	"github.com/sonomandeep/base/apps/connector/internal/docker"
 )
 
@@ -15,15 +20,14 @@ func main() {
 	}
 	defer apiClient.Close()
 
-	result, err := apiClient.ContainerList(context.Background(), client.ContainerListOptions{
-		All: true,
-	})
-	if err != nil {
-		panic(err)
-	}
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
 
-	fmt.Printf("%s  %-22s  %s\n", "ID", "STATUS", "IMAGE")
-	for _, ctr := range result.Items {
-		fmt.Printf("%s  %-22s  %s\n", ctr.ID, ctr.Status, ctr.Image)
+	err = docker.ListenEvents(ctx, apiClient, func(event events.Message) error {
+		fmt.Printf("Event: type=%s action=%s id=%s\n", event.Type, event.Action, event.Actor.ID)
+		return nil
+	})
+	if err != nil && !errors.Is(err, context.Canceled) {
+		log.Printf("Docker stream error: %v", err)
 	}
 }
