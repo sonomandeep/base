@@ -5,10 +5,11 @@ import (
 	"fmt"
 
 	"github.com/moby/moby/client"
+	"github.com/sonomandeep/base/apps/connector/internal/docker"
 )
 
 func main() {
-	apiClient, err := client.New(client.FromEnv)
+	apiClient, err := docker.NewClient()
 	if err != nil {
 		panic(err)
 	}
