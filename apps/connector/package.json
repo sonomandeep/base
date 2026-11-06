@@ -2,11 +2,11 @@
   "name": "connector",
   "private": true,
   "scripts": {
-    "dev": "go run .",
+    "dev": "go run ./cmd",
     "check": "test -z \"$(gofmt -l .)\" && go vet ./...",
     "fmt": "gofmt -w .",
     "test": "go test ./...",
-    "build": "go build -o dist/connector .",
+    "build": "go build -o dist/connector ./cmd",
     "start": "./dist/connector"
   }
 }
